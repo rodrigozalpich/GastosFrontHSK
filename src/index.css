@@ -1,0 +1,202 @@
+@import "tailwindcss";
+
+@theme {
+    /* Multiva Naranja sufijo -400 principal */
+    --color-multiva-naranja-100: #fed2cf;
+    --color-multiva-naranja-200: #fda69f;
+    --color-multiva-naranja-300: #fd7a6b;
+    --color-multiva-naranja-400: #fa4616;
+    --color-multiva-naranja-500: #de3d12;
+    --color-multiva-naranja-600: #b9310d;
+    --color-multiva-naranja-700: #912508;
+    --color-multiva-naranja-800: #671704;
+    --color-multiva-naranja-900: #3e0a01;
+
+    /* Multiva Gris sufijo -500 principal */
+    --color-multiva-gris-100: #d0ddec;
+    --color-multiva-gris-200: #a3bfdb;
+    --color-multiva-gris-300: #7ea4c7;
+    --color-multiva-gris-400: #6a8aa8;
+    --color-multiva-gris-500: #57728b;
+    --color-multiva-gris-600: #4a6278;
+    --color-multiva-gris-700: #394d5e;
+    --color-multiva-gris-800: #273543;
+    --color-multiva-gris-900: #151e27;
+
+    /* Multiva Negro sufijo -900 principal */
+    --color-multiva-negro-100: #f1f0f1;
+    --color-multiva-negro-200: #dbd8d9;
+    --color-multiva-negro-300: #bab4b6;
+    --color-multiva-negro-400: #9e9597;
+    --color-multiva-negro-500: #84787b;
+    --color-multiva-negro-600: #695f62;
+    --color-multiva-negro-700: #50484a;
+    --color-multiva-negro-800: #383334;
+    --color-multiva-negro-900: #231f20;
+
+    /* Multiva Azul -500 principal */
+    --color-multiva-azul-100: #cce0ff;
+    --color-multiva-azul-200: #9bc5ff;
+    --color-multiva-azul-300: #62afff;
+    --color-multiva-azul-400: #0099f6;
+    --color-multiva-azul-500: #0084d5;
+    --color-multiva-azul-600: #0071b7;
+    --color-multiva-azul-700: #005790;
+    --color-multiva-azul-800: #003c65;
+    --color-multiva-azul-900: #00203a;
+
+    /* Multiva Acero sufijo -700 principal */
+    --color-multiva-acero-100: #cfdce7;
+    --color-multiva-acero-200: #a1bdd2;
+    --color-multiva-acero-300: #85a0b4;
+    --color-multiva-acero-400: #6e8596;
+    --color-multiva-acero-500: #596c7a;
+    --color-multiva-acero-600: #455560;
+    --color-multiva-acero-700: #333f48;
+    --color-multiva-acero-800: #263037;
+    --color-multiva-acero-900: #161d22;
+}
+
+/* ESTILOS DEL LOADER */
+.loader {
+    width: 50px;
+    padding: 8px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-multiva-naranja-400);
+    --_m: conic-gradient(#0000 10%, #000),
+    linear-gradient(#000 0 0) content-box;
+    -webkit-mask: var(--_m);
+    mask: var(--_m);
+    -webkit-mask-composite: source-out;
+    mask-composite: subtract;
+    animation: l3 1s infinite linear;
+}
+
+@keyframes l3 {
+    to {
+        transform: rotate(1turn)
+    }
+}
+
+/* Animaciones para notificaciones */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+}
+
+.animate-fade-out {
+    animation: fade-out 0.3s ease-out;
+}
+
+/* Barra de progreso para notificaciones */
+@keyframes progressBar {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+.toast-progress {
+    animation: progressBar 4s linear forwards;
+}
+
+/* Animaciones para modales */
+@keyframes modal-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modal-fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes modal-slide-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes modal-slide-out {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+}
+
+.animate-modal-overlay-in {
+    animation: modal-fade-in 0.2s ease-out;
+}
+
+.animate-modal-overlay-out {
+    animation: modal-fade-out 0.2s ease-out;
+}
+
+.animate-modal-content-in {
+    animation: modal-slide-in 0.3s ease-out forwards;
+}
+
+.animate-modal-content-out {
+    animation: modal-slide-out 0.3s ease-out forwards;
+}
+
+.animate-modal-overlay-in {
+    animation: modal-fade-in 0.2s ease-out forwards;
+}
+
+.animate-modal-overlay-out {
+    animation: modal-fade-out 0.2s ease-out forwards;
+}
+
+/* Animación para menú de acciones */
+@keyframes fadeInSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
