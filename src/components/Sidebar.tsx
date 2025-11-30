@@ -194,7 +194,7 @@ export default function Sidebar(): JSX.Element {
 			{/* Overlay cuando el sidebar está abierto en móvil (opcional para responsive) */}
 			{sideNavState && (
 				<div
-					className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden transition-opacity duration-300"
+					className="fixed inset-0 backdrop-blur-md bg-black/20 z-30 lg:hidden transition-opacity duration-300"
 					onClick={toggleSideNav}
 					aria-hidden="true"
 				/>
@@ -240,7 +240,7 @@ export default function Sidebar(): JSX.Element {
 											handlePageClick(page);
 										}
 									}}
-									className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-gray-100 transition-colors ${
+									className={`flex text-base items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-gray-100 transition-colors ${
 										location.pathname === page.link ? "bg-blue-50 border-l-4 border-blue-500" : ""
 									}`}
 								>
@@ -251,8 +251,8 @@ export default function Sidebar(): JSX.Element {
 											className="w-6 h-6 sm:w-7 sm:h-7 shrink-0"
 										/>
 									)}
-									<div className="text-[#808080] text-xs sm:text-sm flex justify-between items-center w-full min-w-0">
-										<span className="truncate">{page.name}</span>
+									<div className="text-[#808080] text-base sm:text-sm flex justify-between items-center w-full min-w-0">
+										<span className="truncate text-xl">{page.name}</span>
 										{page.nestedPages && page.nestedPages.length > 0 && (
 											<FontAwesomeIcon
 												icon={page.expanded ? faChevronUp : faChevronDown}
@@ -263,33 +263,39 @@ export default function Sidebar(): JSX.Element {
 								</div>
 
 								{/* Páginas anidadas */}
-								{page.nestedPages && page.expanded && (
-									<div className="overflow-hidden transition-all duration-300 ease-in-out bg-gray-50">
-										{page.nestedPages.map((nestedPage, nestedIndex) => (
-											<a
-												key={nestedIndex}
-												onClick={(e) => {
-													e.preventDefault();
-													handleNestedPageClick(nestedPage);
-												}}
-												className={`flex items-center gap-2 ml-4 sm:ml-6 px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-gray-100 transition-colors ${
-													location.pathname === nestedPage.link
-														? "bg-blue-50 border-l-4 border-blue-500"
-														: ""
-												}`}
-											>
-												{nestedPage.imageUrl && (
-													<img
-														src={nestedPage.imageUrl}
-														alt={nestedPage.name}
-														className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"
-													/>
-												)}
-												<span className="text-[#808080] text-xs truncate">
-													{nestedPage.name}
-												</span>
-											</a>
-										))}
+								{page.nestedPages && page.nestedPages.length > 0 && (
+									<div
+										className={`sidebar-accordion-content bg-gray-50 ${
+											page.expanded ? "open" : ""
+										}`}
+									>
+										<div className="overflow-hidden">
+											{page.nestedPages.map((nestedPage, nestedIndex) => (
+												<a
+													key={nestedIndex}
+													onClick={(e) => {
+														e.preventDefault();
+														handleNestedPageClick(nestedPage);
+													}}
+													className={`flex text-base items-center gap-2 ml-4 sm:ml-6 px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-gray-100 transition-colors ${
+														location.pathname === nestedPage.link
+															? "bg-blue-50 border-l-4 border-blue-500"
+															: ""
+													}`}
+												>
+													{nestedPage.imageUrl && (
+														<img
+															src={nestedPage.imageUrl}
+															alt={nestedPage.name}
+															className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"
+														/>
+													)}
+													<span className="text-[#808080] text-base truncate">
+														{nestedPage.name}
+													</span>
+												</a>
+											))}
+										</div>
 									</div>
 								)}
 							</div>

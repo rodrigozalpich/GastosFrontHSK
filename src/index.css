@@ -200,3 +200,60 @@
         transform: translateY(0);
     }
 }
+
+/* Animaciones para acordeón del Sidebar con rebote sutil */
+@keyframes accordion-bounce-open {
+    0% {
+        max-height: 0;
+        opacity: 0;
+        transform: scaleY(0.92);
+        transform-origin: top;
+    }
+    50% {
+        opacity: 0.85;
+        transform: scaleY(1.015);
+        transform-origin: top;
+    }
+    70% {
+        transform: scaleY(0.99);
+        transform-origin: top;
+    }
+    100% {
+        max-height: 1000px;
+        opacity: 1;
+        transform: scaleY(1);
+        transform-origin: top;
+    }
+}
+
+@keyframes accordion-close {
+    0% {
+        max-height: 1000px;
+        opacity: 1;
+        transform: scaleY(1);
+        transform-origin: top;
+    }
+    100% {
+        max-height: 0;
+        opacity: 0;
+        transform: scaleY(0.92);
+        transform-origin: top;
+    }
+}
+
+/* Clases para el acordeón del Sidebar */
+.sidebar-accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transform-origin: top;
+    opacity: 0;
+    transform: scaleY(0.92);
+}
+
+.sidebar-accordion-content.open {
+    animation: accordion-bounce-open 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.sidebar-accordion-content:not(.open) {
+    animation: accordion-close 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
