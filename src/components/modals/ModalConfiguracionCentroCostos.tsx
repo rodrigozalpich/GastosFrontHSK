@@ -78,12 +78,12 @@ export default function ModalConfiguracionCentroCostos({
 			return await datosEmpleadoService.crearPlazaCentro(centro, idEmpresa);
 		},
 		onSuccess: async (respuesta) => {
-			if (respuesta.estatus) {
+			if (respuesta) {
 				mostrarNotificacion("Centro de costos agregado exitosamente", "success");
 				await queryClient.invalidateQueries({ queryKey: ["plazaCentros", plazaEmpleado.id, idEmpresa] });
 				setCentroCostoSeleccionado("");
 			} else {
-				mostrarNotificacion(respuesta.descripcion || "Error al agregar centro de costos", "error");
+				mostrarNotificacion("Error al agregar centro de costos", "error");
 			}
 		},
 		onError: (error) => {
