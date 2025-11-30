@@ -225,22 +225,15 @@ export default function ConfiguracionArbol({
 				idEmpresaActual
 			);
 		},
-		onSuccess: async (respuesta) => {
-			if (respuesta.estatus) {
-				mostrarNotificacion(
-					"Árbol de autorización guardado exitosamente",
-					"success"
-				);
-				await refetchArbol();
-				await refetchNiveles();
-				setMostrarConfirmacionGuardar(false);
-				onSuccess?.();
-			} else {
-				mostrarNotificacion(
-					respuesta.descripcion || "Error al guardar el árbol",
-					"error"
-				);
-			}
+		onSuccess: async () => {
+      mostrarNotificacion(
+        "Árbol de autorización guardado exitosamente",
+        "success"
+      );
+      await refetchArbol();
+      await refetchNiveles();
+      setMostrarConfirmacionGuardar(false);
+      onSuccess?.();
 		},
 		onError: (error) => {
 			mostrarNotificacion(
