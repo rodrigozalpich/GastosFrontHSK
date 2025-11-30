@@ -53,13 +53,9 @@ export default function ModalLimitesPersonalizados({
 			};
 			return await datosEmpleadoService.editarLimites(plazaActualizada, idEmpresa);
 		},
-		onSuccess: (respuesta) => {
-			if (respuesta.estatus) {
-				mostrarNotificacion("Límites personalizados actualizados exitosamente", "success");
-				onSuccess();
-			} else {
-				mostrarNotificacion(respuesta.descripcion || "Error al actualizar límites", "error");
-			}
+    onSuccess: () => {
+      mostrarNotificacion("Límites personalizados actualizados exitosamente", "success");
+      onSuccess();
 		},
 		onError: (error) => {
 			mostrarNotificacion(

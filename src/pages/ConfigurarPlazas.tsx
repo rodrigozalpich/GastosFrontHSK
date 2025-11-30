@@ -211,7 +211,8 @@ export default function ConfigurarPlazas(): JSX.Element {
 		mutationFn: async (plaza: PlazaEmpleadoDTO) => {
 			if (!idEmpresa) throw new Error("Falta el ID de empresa");
 			const plazaActualizada = {
-				...plaza,
+        ...plaza,
+        nombreEmpleado: plaza.nombreEmpleado,
 				borrado: true,
 				estatus: 0,
 				fechaBaja: new Date().toISOString(),
