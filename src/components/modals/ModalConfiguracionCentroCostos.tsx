@@ -204,7 +204,7 @@ export default function ModalConfiguracionCentroCostos({
 						checkedText="Activo"
 						uncheckedText="Inactivo"
 						disabled={editarRelacionMutation.isPending}
-						className="!justify-start !items-start"
+						className="justify-start! items-start!"
 					/>
 				),
 			},

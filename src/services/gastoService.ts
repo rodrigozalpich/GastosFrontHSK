@@ -18,7 +18,15 @@ import type { UsuarioGastoDTO } from "../types/seguridad";
 
 /**
  * Servicio de gestión de gastos
- * Migrado de GastoService de Angular
+ * 
+ * Servicio principal para todas las operaciones relacionadas con gastos.
+ * Migrado de GastoService de Angular, adaptado para usar Axios y Promises.
+ * 
+ * @class GastoService
+ * @example
+ * ```typescript
+ * const gastos = await gastoService.obtenerGastos(idEmpleado, idEmpresa);
+ * ```
  */
 class GastoService {
 	private readonly apiUrl = `${import.meta.env.VITE_API_BACK_BASE_URL}Gasto`;
@@ -35,6 +43,11 @@ class GastoService {
 
 	/**
 	 * Obtiene todos los gastos de un empleado
+	 * 
+	 * @param idEmpleado - ID del empleado
+	 * @param idEmpresa - ID de la empresa
+	 * @returns Promise con array de gastos del empleado
+	 * @throws Error si la petición falla
 	 */
 	async obtenerGastos(idEmpleado: number, idEmpresa: number): Promise<GastoDTO[]> {
 		const response = await apiBACK.get<GastoDTO[]>(
@@ -68,6 +81,11 @@ class GastoService {
 
 	/**
 	 * Crea un nuevo gasto
+	 * 
+	 * @param registro - Datos del gasto a crear
+	 * @param idEmpresa - ID de la empresa
+	 * @returns Promise con respuesta del servidor
+	 * @throws Error si la petición falla o los datos son inválidos
 	 */
 	async crearGasto(registro: GastoDTO, idEmpresa: number): Promise<RespuestaDTO> {
 		const response = await apiBACK.post<RespuestaDTO>(

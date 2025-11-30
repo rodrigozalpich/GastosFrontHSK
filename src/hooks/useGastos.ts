@@ -7,10 +7,24 @@ import type { GastoDTO } from "../types/gastos";
 
 /**
  * Hook personalizado para gestionar gastos con Material React Table
- * Combina React Query para data fetching con Zustand para estado local
  * 
- * NOTA: Los filtros simples (por columna, búsqueda) los maneja MRT.
+ * Combina React Query para data fetching con Zustand para estado local.
+ * Proporciona métodos para CRUD de gastos y manejo de filtros complejos.
+ * 
+ * **Nota**: Los filtros simples (por columna, búsqueda) los maneja MRT.
  * Este hook solo maneja filtros complejos y operaciones CRUD.
+ * 
+ * @returns Objeto con datos de gastos, estado de carga, y métodos CRUD
+ * @example
+ * ```typescript
+ * const { gastos, isLoading, crearGasto, actualizarGasto } = useGastos();
+ * 
+ * // Crear un nuevo gasto
+ * crearGasto(nuevoGasto);
+ * 
+ * // Actualizar un gasto existente
+ * actualizarGasto(gastoActualizado);
+ * ```
  */
 export function useGastos() {
 	const queryClient = useQueryClient();

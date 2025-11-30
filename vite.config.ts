@@ -8,4 +8,32 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    // Optimizaciones para producción
+    target: 'esnext',
+    minify: 'esbuild',
+    sourcemap: false, // Deshabilitar sourcemaps en producción para reducir tamaño
+    rollupOptions: {
+      output: {
+        // Separar chunks para mejor caching
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router'],
+          'query-vendor': ['@tanstack/react-query'],
+          'ui-vendor': ['@mui/material', '@mui/icons-material', 'material-react-table'],
+        },
+      },
+    },
+    // Aumentar límite de advertencia de tamaño de chunk
+    chunkSizeWarningLimit: 1000,
+  },
+  // Optimizaciones de servidor de desarrollo
+  server: {
+    port: 5173,
+    strictPort: false,
+  },
+  // Previsualización optimizada
+  preview: {
+    port: 4173,
+    strictPort: false,
+  },
 })
