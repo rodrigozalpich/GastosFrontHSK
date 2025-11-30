@@ -53,13 +53,9 @@ export default function ModalLimitesExtranjeros({
 			};
 			return await datosEmpleadoService.editarLimites(plazaActualizada, idEmpresa);
 		},
-		onSuccess: (respuesta) => {
-			if (respuesta.estatus) {
-				mostrarNotificacion("Límites extranjeros actualizados exitosamente", "success");
-				onSuccess();
-			} else {
-				mostrarNotificacion(respuesta.descripcion || "Error al actualizar límites", "error");
-			}
+		onSuccess: () => {
+      mostrarNotificacion("Límites extranjeros actualizados exitosamente", "success");
+      onSuccess();
 		},
 		onError: (error) => {
 			mostrarNotificacion(
