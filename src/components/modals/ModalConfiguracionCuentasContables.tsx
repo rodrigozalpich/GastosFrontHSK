@@ -80,12 +80,12 @@ export default function ModalConfiguracionCuentasContables({
 			return await datosEmpleadoService.crearPlazaCuenta(cuenta, idEmpresa);
 		},
 		onSuccess: async (respuesta) => {
-			if (respuesta.estatus) {
+			if (respuesta) {
 				mostrarNotificacion("Cuenta contable agregada exitosamente", "success");
 				await queryClient.invalidateQueries({ queryKey: ["plazaCuentas", plazaEmpleado.id, idEmpresa] });
 				setCuentaContableSeleccionada("");
 			} else {
-				mostrarNotificacion(respuesta.descripcion || "Error al agregar cuenta contable", "error");
+				mostrarNotificacion("Error al agregar cuenta contable", "error");
 			}
 		},
 		onError: (error) => {
