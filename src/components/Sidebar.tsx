@@ -219,7 +219,7 @@ export default function Sidebar(): JSX.Element {
 							<a href="/dashboard" className="flex items-center">
 								<img
 									className="w-24 sm:w-32 py-[0.3rem]"
-									src="/assets/LOGOS RFACIL_SIMPLE.svg"
+									src="/assets/rfacilLogo.svg"
 									alt="Rfácil Logo"
 								/>
 							</a>
@@ -228,7 +228,7 @@ export default function Sidebar(): JSX.Element {
 
 					{/* Menú - Solo visible cuando está expandido */}
 					{sideNavState && (
-						<nav className="mt-4">
+						<nav className="mt-4 px-3">
 							{paginasFiltradas.map((page, index) => (
 							<div key={index}>
 								{/* Item de menú principal */}
@@ -240,7 +240,7 @@ export default function Sidebar(): JSX.Element {
 											handlePageClick(page);
 										}
 									}}
-									className={`flex text-base items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-gray-100 transition-colors ${
+									className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-[#EEF2FF] transition-colors rounded-md ${
 										location.pathname === page.link ? "bg-blue-50 border-l-4 border-blue-500" : ""
 									}`}
 								>
@@ -248,15 +248,15 @@ export default function Sidebar(): JSX.Element {
 										<img
 											src={page.imageUrl}
 											alt={page.name}
-											className="w-6 h-6 sm:w-7 sm:h-7 shrink-0"
+											className="w-4 shrink-0"
 										/>
 									)}
-									<div className="text-[#808080] text-base sm:text-sm flex justify-between items-center w-full min-w-0">
-										<span className="truncate text-xl">{page.name}</span>
+									<div className="text-[#808080] hover:text-[#4338CA] text-base sm:text-sm flex justify-between items-center w-full min-w-0">
+										<span className="truncate text-base">{page.name}</span>
 										{page.nestedPages && page.nestedPages.length > 0 && (
 											<FontAwesomeIcon
-												icon={page.expanded ? faChevronUp : faChevronDown}
-												className="text-[#21416e] text-xs sm:text-sm shrink-0 ml-2"
+												icon={faChevronDown}
+												className={`text-[#21416e] hover:text-[#4338CA] text-xs sm:text-sm shrink-0 ml-2 transition-transform duration-300 ease-in-out ${page.expanded ? "-rotate-180" : ""}`}
 											/>
 										)}
 									</div>
@@ -277,9 +277,9 @@ export default function Sidebar(): JSX.Element {
 														e.preventDefault();
 														handleNestedPageClick(nestedPage);
 													}}
-													className={`flex text-base items-center gap-2 ml-4 sm:ml-6 px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-gray-100 transition-colors ${
+													className={`flex text-[#808080] hover:text-[#4338CA]  items-center gap-2 ml-4 sm:ml-6 px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-[#EEF2FF] transition-colors rounded-md ${
 														location.pathname === nestedPage.link
-															? "bg-blue-50 border-l-4 border-blue-500"
+															? "bg-[#EEF2FF] border-l-4 border-[#4338CA]"
 															: ""
 													}`}
 												>
@@ -287,10 +287,10 @@ export default function Sidebar(): JSX.Element {
 														<img
 															src={nestedPage.imageUrl}
 															alt={nestedPage.name}
-															className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"
+															className="w-3.5 shrink-0"
 														/>
 													)}
-													<span className="text-[#808080] text-base truncate">
+													<span className="text-base truncate">
 														{nestedPage.name}
 													</span>
 												</a>
