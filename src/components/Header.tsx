@@ -1,14 +1,12 @@
-import { type JSX, useEffect } from "react";
+import { type JSX, useEffect, useState, useRef, useCallback } from "react";
 import { useAuthStore } from "../store/authStore";
-import { useTituloStore } from "../services/tituloService";
 import { useSidenavStore } from "../store/sidenavStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faTimes, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Componente Header - Barra superior de la aplicación
  * Muestra el título de la página y el selector de empresa (si aplica)
- * Integra TituloService para títulos dinámicos
  */
 export default function Header(): JSX.Element {
 	const {
@@ -19,7 +17,6 @@ export default function Header(): JSX.Element {
 		cambiarEmpresa,
 		estaLogueado,
 	} = useAuthStore();
-	const { titulo } = useTituloStore();
 	const { sideNavState, toggleSideNav } = useSidenavStore();
 
 	useEffect(() => {
@@ -28,12 +25,48 @@ export default function Header(): JSX.Element {
 		}
 	}, [estaLogueado, empresasPertenecientes, cargarEmpresas]);
 
-	const handleEmpresaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const nuevaEmpresaId = parseInt(e.target.value, 10);
-		if (!isNaN(nuevaEmpresaId)) {
-			cambiarEmpresa(nuevaEmpresaId);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isClosing, setIsClosing] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	const handleCloseDropdown = useCallback(() => {
+		if (isClosing) return; // Prevenir múltiples cierres
+		setIsClosing(true);
+	}, [isClosing]);
+
+	const handleEmpresaChange = (empresaId: number) => {
+		cambiarEmpresa(empresaId);
+		handleCloseDropdown();
+	};
+
+	const handleOpenDropdown = () => {
+		if (!isDropdownOpen && !isClosing) {
+			setIsClosing(false);
+			setIsDropdownOpen(true);
 		}
 	};
+
+	// Cerrar dropdown al hacer clic fuera
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+				if (isDropdownOpen && !isClosing) {
+					handleCloseDropdown();
+				}
+			}
+		};
+
+		if (isDropdownOpen || isClosing) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [isDropdownOpen, isClosing, handleCloseDropdown]);
+
+	// Obtener la empresa activa
+	const empresaActiva = empresasPertenecientes?.find((e) => e.id === empresaActivaId);
 
 	if (!estaLogueado) {
 		return <></>;
@@ -41,7 +74,7 @@ export default function Header(): JSX.Element {
 
 	return (
 		<header
-			className={`bg-white shadow-sm border-b border-gray-200 fixed top-0 right-0 z-30 h-14 sm:h-16 transition-all duration-300 ${
+			className={`bg-[#1E1B4B] shadow-sm border-b border-gray-200 fixed top-0 right-0 z-30 h-14 sm:h-16 transition-all duration-300 ${
 				sideNavState ? "left-0 lg:left-64 xl:left-72" : "left-0"
 			}`}
 		>
@@ -51,48 +84,98 @@ export default function Header(): JSX.Element {
 					<div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
 						<button
 							onClick={toggleSideNav}
-							className="p-1.5 sm:p-2 rounded-md hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-shrink-0"
+							className="cursor-pointer p-1.5 sm:p-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0"
 							aria-label={sideNavState ? "Ocultar menú" : "Mostrar menú"}
 						>
 							<FontAwesomeIcon
 								icon={sideNavState ? faTimes : faBars}
-								className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 transition-transform duration-300"
+								className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300"
 							/>
 						</button>
-						<div className="flex-shrink-0 min-w-0">
-							<h1 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 truncate">
-								{titulo || "Rfácil"}
-							</h1>
-						</div>
 					</div>
 
 					{/* Selector de Empresa */}
 					{muestraEmpresas && empresasPertenecientes && empresasPertenecientes.length > 0 && (
-						<div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-							<svg
-								className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 hidden sm:block"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
+						<div className="relative shrink-0" ref={dropdownRef}>
+							<button
+								type="button"
+								onClick={() => {
+									if (isDropdownOpen && !isClosing) {
+										handleCloseDropdown();
+									} else if (!isDropdownOpen) {
+										handleOpenDropdown();
+									}
+								}}
+								className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 bg-[#204675] hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#1E1B4B] rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border border-[#2D5E9C] cursor-pointer"
+								aria-label="Seleccionar empresa"
+								aria-expanded={isDropdownOpen && !isClosing}
+								aria-haspopup="listbox"
 							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
+								{/* Ícono de documento/impresora */}
+								<svg
+									className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
 									strokeWidth={2}
-									d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+									/>
+								</svg>
+								{/* Texto de la empresa */}
+								<span className="text-white font-medium text-xs sm:text-sm uppercase whitespace-nowrap max-w-[150px] sm:max-w-[200px] lg:max-w-[250px] truncate">
+									{empresaActiva?.nombreComercial || "Seleccionar empresa"}
+								</span>
+								{/* Chevron hacia abajo */}
+								<FontAwesomeIcon
+									icon={faChevronDown}
+									className={`w-3 h-3 sm:w-4 sm:h-4 text-white transition-transform duration-200 shrink-0 ${
+										isDropdownOpen && !isClosing ? "rotate-180" : ""
+									}`}
 								/>
-							</svg>
-							<select
-								value={empresaActivaId || ""}
-								onChange={handleEmpresaChange}
-								className="block w-full max-w-[150px] sm:max-w-[200px] lg:max-w-none rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs sm:text-sm bg-white px-2 sm:px-3 py-1.5 sm:py-2 border"
-							>
-								{empresasPertenecientes.map((empresa) => (
-									<option key={empresa.id} value={empresa.id}>
-										{empresa.nombreComercial}
-									</option>
-								))}
-							</select>
+							</button>
+
+							{/* Dropdown flotante */}
+							{(isDropdownOpen || isClosing) && (
+								<div
+									className={`absolute right-0 mt-2 w-full min-w-[200px] sm:min-w-[250px] bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[300px] overflow-y-auto ${
+										isClosing ? "animate-dropdown-fade-out" : "animate-dropdown-fade-in"
+									}`}
+									onAnimationEnd={(e) => {
+										// Solo procesar el evento del elemento principal, no de los hijos
+										if (e.currentTarget === e.target && isClosing) {
+											setIsClosing(false);
+											setIsDropdownOpen(false);
+										}
+									}}
+								>
+									<ul
+										role="listbox"
+										className="py-1"
+										aria-label="Lista de empresas"
+									>
+										{empresasPertenecientes.map((empresa) => (
+											<li key={empresa.id} role="option">
+												<button
+													type="button"
+													onClick={() => handleEmpresaChange(empresa.id)}
+													className={`w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
+														empresa.id === empresaActivaId
+															? "bg-blue-50 text-blue-700 font-medium"
+															: "text-gray-700 hover:bg-gray-50"
+													}`}
+													aria-selected={empresa.id === empresaActivaId}
+												>
+													{empresa.nombreComercial}
+												</button>
+											</li>
+										))}
+									</ul>
+								</div>
+							)}
 						</div>
 					)}
 				</div>

@@ -201,6 +201,37 @@
     }
 }
 
+/* Animaciones para dropdown */
+@keyframes dropdown-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dropdown-fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+.animate-dropdown-fade-in {
+    animation: dropdown-fade-in 0.2s ease-out forwards;
+}
+
+.animate-dropdown-fade-out {
+    animation: dropdown-fade-out 0.2s ease-out forwards;
+}
+
 /* Animaciones para acordeón del Sidebar con rebote sutil */
 @keyframes accordion-bounce-open {
     0% {
