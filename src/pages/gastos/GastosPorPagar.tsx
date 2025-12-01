@@ -180,6 +180,19 @@ export default function GastosPorPagar(): JSX.Element {
 		autoResetPageIndex: false,
 		localization: MRT_Localization_ES,
 		muiTableContainerProps: { sx: { maxHeight: "600px" } },
+		muiTableHeadCellProps: ({ column, table }) => {
+			const allColumns = table.getAllColumns();
+			const isFirstColumn = column.getIndex() === 0;
+			const isLastColumn = column.getIndex() === allColumns.length - 1;
+			return {
+				sx: {
+					backgroundColor: "#312E81",
+					color: "#ffffff",
+					...(isFirstColumn && { borderTopLeftRadius: "12px" }),
+					...(isLastColumn && { borderTopRightRadius: "12px" }),
+				},
+			};
+		},
 		renderRowActions: ({ row }) => (
 			<TableActionButton
 				icon={faMoneyBillWave}

@@ -417,11 +417,28 @@ export default function ConfigurarPlazas(): JSX.Element {
 				header: "Acciones",
 				muiTableHeadCellProps: {
 					align: "center",
+					sx: {
+						backgroundColor: "#312E81",
+						color: "#ffffff",
+					},
 				},
 				muiTableBodyCellProps: {
 					align: "center",
 				},
 			},
+		},
+		muiTableHeadCellProps: ({ column, table }) => {
+			const allColumns = table.getAllColumns();
+			const isFirstColumn = column.getIndex() === 0;
+			const isLastColumn = column.getIndex() === allColumns.length - 1;
+			return {
+				sx: {
+					backgroundColor: "#312E81",
+					color: "#ffffff",
+					...(isFirstColumn && { borderTopLeftRadius: "12px" }),
+					...(isLastColumn && { borderTopRightRadius: "12px" }),
+				},
+			};
 		},
 		renderRowActions: ({ row }) => {
 			const plaza = row.original;
@@ -458,19 +475,31 @@ export default function ConfigurarPlazas(): JSX.Element {
 					flexWrap: "wrap",
 				}}
 			>
-				<Box sx={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+				<Box
+					sx={{
+						display: "flex",
+						gap: "0.5rem",
+						alignItems: "center",
+						flexWrap: "wrap",
+					}}
+				>
 					<CustomButton
 						type="button"
 						text="Agregar plaza"
 						onClick={() => setMostrarModalAgregarPlaza(true)}
 					/>
-					<FormControl size="small" sx={{ minWidth: 150 }}>
+					<FormControl
+						size="small"
+						sx={{ minWidth: 150 }}
+					>
 						<InputLabel>Filtro por</InputLabel>
 						<Select
 							value={filtroTipo}
 							label="Filtro por"
 							onChange={(e) => {
-								setFiltroTipo(e.target.value as "plaza" | "division" | "sinFiltro");
+								setFiltroTipo(
+									e.target.value as "plaza" | "division" | "sinFiltro"
+								);
 								setFiltroTexto("");
 							}}
 						>
@@ -482,7 +511,9 @@ export default function ConfigurarPlazas(): JSX.Element {
 					{filtroTipo !== "sinFiltro" && (
 						<input
 							type="text"
-							placeholder={`Filtrar por ${filtroTipo === "plaza" ? "plaza" : "división"}...`}
+							placeholder={`Filtrar por ${
+								filtroTipo === "plaza" ? "plaza" : "división"
+							}...`}
 							value={filtroTexto}
 							onChange={(e) => setFiltroTexto(e.target.value)}
 							className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

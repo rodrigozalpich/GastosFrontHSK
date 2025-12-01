@@ -1,5 +1,10 @@
 import { type JSX, useState, useEffect, useMemo, useCallback } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import {
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import {
 	MaterialReactTable,
 	useMaterialReactTable,
@@ -10,7 +15,11 @@ import { datosEmpleadoService } from "../../services/datosEmpleadoService";
 import { centroCostoService } from "../../services/centroCostoService";
 import { useAuthStore } from "../../store/authStore";
 import { useNotificacionStore } from "../../store/notificacionStore";
-import type { PlazaEmpleadoDTO, PlazaCentroDTO, CentroCostoDTO } from "../../types/catalogos";
+import type {
+	PlazaEmpleadoDTO,
+	PlazaCentroDTO,
+	CentroCostoDTO,
+} from "../../types/catalogos";
 import ActionButton from "../ActionButton";
 import AutocompleteSelectField from "../AutocompleteSelectField";
 import CustomButton from "../CustomButton";
@@ -37,12 +46,18 @@ export default function ModalConfiguracionCentroCostos({
 }: ModalConfiguracionCentroCostosProps): JSX.Element {
 	const queryClient = useQueryClient();
 	const { obtenerIdEmpresa } = useAuthStore();
-	const mostrarNotificacion = useNotificacionStore((state) => state.mostrarNotificacion);
+	const mostrarNotificacion = useNotificacionStore(
+		(state) => state.mostrarNotificacion
+	);
 	const idEmpresa = obtenerIdEmpresa();
 
-	const [centroCostoSeleccionado, setCentroCostoSeleccionado] = useState<number | "">("");
-	const [mostrarConfirmacionBorrar, setMostrarConfirmacionBorrar] = useState(false);
-	const [centroParaBorrar, setCentroParaBorrar] = useState<PlazaCentroDTO | null>(null);
+	const [centroCostoSeleccionado, setCentroCostoSeleccionado] = useState<
+		number | ""
+	>("");
+	const [mostrarConfirmacionBorrar, setMostrarConfirmacionBorrar] =
+		useState(false);
+	const [centroParaBorrar, setCentroParaBorrar] =
+		useState<PlazaCentroDTO | null>(null);
 
 	const { data: centrosCostos = [] } = useQuery<CentroCostoDTO[]>({
 		queryKey: ["centrosCostos", idEmpresa],
@@ -62,7 +77,10 @@ export default function ModalConfiguracionCentroCostos({
 		queryKey: ["plazaCentros", plazaEmpleado.id, idEmpresa],
 		queryFn: async () => {
 			if (!idEmpresa) throw new Error("Falta el ID de empresa");
-			return await datosEmpleadoService.obtenerPaginadoPlazaCentro(plazaEmpleado.id, idEmpresa);
+			return await datosEmpleadoService.obtenerPaginadoPlazaCentro(
+				plazaEmpleado.id,
+				idEmpresa
+			);
 		},
 		enabled: !!idEmpresa && abierto && !!plazaEmpleado.id,
 	});
@@ -79,8 +97,13 @@ export default function ModalConfiguracionCentroCostos({
 		},
 		onSuccess: async (respuesta) => {
 			if (respuesta) {
-				mostrarNotificacion("Centro de costos agregado exitosamente", "success");
-				await queryClient.invalidateQueries({ queryKey: ["plazaCentros", plazaEmpleado.id, idEmpresa] });
+				mostrarNotificacion(
+					"Centro de costos agregado exitosamente",
+					"success"
+				);
+				await queryClient.invalidateQueries({
+					queryKey: ["plazaCentros", plazaEmpleado.id, idEmpresa],
+				});
 				setCentroCostoSeleccionado("");
 			} else {
 				mostrarNotificacion("Error al agregar centro de costos", "error");
@@ -88,7 +111,9 @@ export default function ModalConfiguracionCentroCostos({
 		},
 		onError: (error) => {
 			mostrarNotificacion(
-				`Error al agregar centro de costos: ${error instanceof Error ? error.message : "Error desconocido"}`,
+				`Error al agregar centro de costos: ${
+					error instanceof Error ? error.message : "Error desconocido"
+				}`,
 				"error"
 			);
 		},
@@ -101,15 +126,25 @@ export default function ModalConfiguracionCentroCostos({
 		},
 		onSuccess: async (respuesta) => {
 			if (respuesta.estatus) {
-				mostrarNotificacion("Centro de costos actualizado exitosamente", "success");
-				await queryClient.invalidateQueries({ queryKey: ["plazaCentros", plazaEmpleado.id, idEmpresa] });
+				mostrarNotificacion(
+					"Centro de costos actualizado exitosamente",
+					"success"
+				);
+				await queryClient.invalidateQueries({
+					queryKey: ["plazaCentros", plazaEmpleado.id, idEmpresa],
+				});
 			} else {
-				mostrarNotificacion(respuesta.descripcion || "Error al actualizar centro de costos", "error");
+				mostrarNotificacion(
+					respuesta.descripcion || "Error al actualizar centro de costos",
+					"error"
+				);
 			}
 		},
 		onError: (error) => {
 			mostrarNotificacion(
-				`Error al actualizar centro de costos: ${error instanceof Error ? error.message : "Error desconocido"}`,
+				`Error al actualizar centro de costos: ${
+					error instanceof Error ? error.message : "Error desconocido"
+				}`,
 				"error"
 			);
 		},
@@ -121,7 +156,9 @@ export default function ModalConfiguracionCentroCostos({
 			return;
 		}
 
-		const centro = centrosCostos.find((c) => c.id === Number(centroCostoSeleccionado));
+		const centro = centrosCostos.find(
+			(c) => c.id === Number(centroCostoSeleccionado)
+		);
 		if (!centro) {
 			mostrarNotificacion("Centro de costos no encontrado", "error");
 			return;
@@ -176,7 +213,9 @@ export default function ModalConfiguracionCentroCostos({
 	const centroOptions = useMemo(
 		() =>
 			centrosCostos
-				.filter((c) => !relacionesFiltradas.some((r) => r.idCentroCosto === c.id))
+				.filter(
+					(c) => !relacionesFiltradas.some((r) => r.idCentroCosto === c.id)
+				)
 				.map((c) => ({ id: c.id, nombre: `${c.codigo} - ${c.nombre}` })),
 		[centrosCostos, relacionesFiltradas]
 	);
@@ -218,6 +257,19 @@ export default function ModalConfiguracionCentroCostos({
 		localization: MRT_Localization_ES,
 		enableRowActions: true,
 		positionActionsColumn: "last",
+		muiTableHeadCellProps: ({ column, table }) => {
+			const allColumns = table.getAllColumns();
+			const isFirstColumn = column.getIndex() === 0;
+			const isLastColumn = column.getIndex() === allColumns.length - 1;
+			return {
+				sx: {
+					backgroundColor: "#312E81",
+					color: "#ffffff",
+					...(isFirstColumn && { borderTopLeftRadius: "12px" }),
+					...(isLastColumn && { borderTopRightRadius: "12px" }),
+				},
+			};
+		},
 		renderRowActions: ({ row }) => (
 			<ActionButton
 				icon={faTrash}
@@ -243,11 +295,22 @@ export default function ModalConfiguracionCentroCostos({
 	}, [abierto]);
 
 	return (
-		<Dialog open={abierto} onClose={onClose} maxWidth="lg" fullWidth>
+		<Dialog
+			open={abierto}
+			onClose={onClose}
+			maxWidth="lg"
+			fullWidth
+		>
 			<DialogTitle>
 				<div className="flex items-center justify-between">
 					<span>Configurar Centro de Costos - {plazaEmpleado.nombrePlaza}</span>
-					<ActionButton icon={faTimes} text="Cerrar" variant="cancel" onClick={onClose} showText={false} />
+					<ActionButton
+						icon={faTimes}
+						text="Cerrar"
+						variant="cancel"
+						onClick={onClose}
+						showText={false}
+					/>
 				</div>
 			</DialogTitle>
 			<DialogContent dividers>
@@ -256,7 +319,11 @@ export default function ModalConfiguracionCentroCostos({
 						<div className="flex-1">
 							<AutocompleteSelectField
 								label="Centro de Costos"
-								value={centroCostoSeleccionado === "" ? 0 : Number(centroCostoSeleccionado)}
+								value={
+									centroCostoSeleccionado === ""
+										? 0
+										: Number(centroCostoSeleccionado)
+								}
 								onChange={(value) => setCentroCostoSeleccionado(value || "")}
 								options={centroOptions}
 								placeholder="Seleccione un centro de costos"
@@ -267,11 +334,14 @@ export default function ModalConfiguracionCentroCostos({
 							type="button"
 							text="Agregar"
 							onClick={handleAgregar}
-							disabled={!centroCostoSeleccionado || crearRelacionMutation.isPending}
+							disabled={
+								!centroCostoSeleccionado || crearRelacionMutation.isPending
+							}
 						/>
 					</div>
 
-					{(cargandoRelaciones || refrescandoRelaciones) && relacionesFiltradas.length === 0 ? (
+					{(cargandoRelaciones || refrescandoRelaciones) &&
+					relacionesFiltradas.length === 0 ? (
 						<Loader text="Cargando centros de costos..." />
 					) : (
 						<div className="bg-white rounded-lg shadow">
@@ -281,7 +351,12 @@ export default function ModalConfiguracionCentroCostos({
 				</div>
 			</DialogContent>
 			<DialogActions>
-				<ActionButton icon={faTimes} text="Cerrar" variant="cancel" onClick={onClose} />
+				<ActionButton
+					icon={faTimes}
+					text="Cerrar"
+					variant="cancel"
+					onClick={onClose}
+				/>
 			</DialogActions>
 
 			<ModalConfirmacion
@@ -300,4 +375,3 @@ export default function ModalConfiguracionCentroCostos({
 		</Dialog>
 	);
 }
-

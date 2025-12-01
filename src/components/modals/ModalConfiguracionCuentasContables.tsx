@@ -256,6 +256,19 @@ export default function ModalConfiguracionCuentasContables({
 		localization: MRT_Localization_ES,
 		enableRowActions: true,
 		positionActionsColumn: "last",
+		muiTableHeadCellProps: ({ column, table }) => {
+			const allColumns = table.getAllColumns();
+			const isFirstColumn = column.getIndex() === 0;
+			const isLastColumn = column.getIndex() === allColumns.length - 1;
+			return {
+				sx: {
+					backgroundColor: "#312E81",
+					color: "#ffffff",
+					...(isFirstColumn && { borderTopLeftRadius: "12px" }),
+					...(isLastColumn && { borderTopRightRadius: "12px" }),
+				},
+			};
+		},
 		renderRowActions: ({ row }) => (
 			<div className="flex gap-2">
 				{!row.original.esDefault && (

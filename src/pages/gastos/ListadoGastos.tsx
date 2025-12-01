@@ -160,6 +160,19 @@ export default function ListadoGastos(): JSX.Element {
 				maxHeight: "600px",
 			},
 		},
+		muiTableHeadCellProps: ({ column, table }) => {
+			const allColumns = table.getAllColumns();
+			const isFirstColumn = column.getIndex() === 0;
+			const isLastColumn = column.getIndex() === allColumns.length - 1;
+			return {
+				sx: {
+					backgroundColor: "#312E81",
+					color: "#ffffff",
+					...(isFirstColumn && { borderTopLeftRadius: "12px" }),
+					...(isLastColumn && { borderTopRightRadius: "12px" }),
+				},
+			};
+		},
 		renderRowActions: ({ row }) => (
 			<div className="flex gap-2">
 				<TableActionButton

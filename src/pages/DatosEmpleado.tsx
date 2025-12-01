@@ -174,11 +174,28 @@ export default function DatosEmpleado(): JSX.Element {
 				header: "Acciones",
 				muiTableHeadCellProps: {
 					align: "center",
+					sx: {
+						backgroundColor: "#312E81",
+						color: "#ffffff",
+					},
 				},
 				muiTableBodyCellProps: {
 					align: "center",
 				},
 			},
+		},
+		muiTableHeadCellProps: ({ column, table }) => {
+			const allColumns = table.getAllColumns();
+			const isFirstColumn = column.getIndex() === 0;
+			const isLastColumn = column.getIndex() === allColumns.length - 1;
+			return {
+				sx: {
+					backgroundColor: "#312E81",
+					color: "#ffffff",
+					...(isFirstColumn && { borderTopLeftRadius: "12px" }),
+					...(isLastColumn && { borderTopRightRadius: "12px" }),
+				},
+			};
 		},
 		renderRowActions: ({ row }) => (
 			<div className="flex items-center justify-center gap-3">
@@ -223,9 +240,7 @@ export default function DatosEmpleado(): JSX.Element {
 					justifyContent: "space-between",
 				}}
 			>
-				<Box>
-					{/* Botón para agregar empleado si es necesario */}
-				</Box>
+				<Box>{/* Botón para agregar empleado si es necesario */}</Box>
 				<Box sx={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
 					<MRT_GlobalFilterTextField table={table} />
 				</Box>
