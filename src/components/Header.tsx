@@ -9,7 +9,6 @@ import {
 	faBell,
 	faCircleQuestion,
 	faRightFromBracket,
-	faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
 
 /**
@@ -151,7 +150,7 @@ export default function Header(): JSX.Element {
 
 	return (
 		<header
-			className={`bg-[#1E1B4B] shadow-sm border-b border-gray-200 fixed top-0 right-0 z-30 h-16 sm:h-20 transition-all duration-300 ${
+			className={`bg-[#1E1B4B] shadow-sm border-b border-gray-200 fixed top-0 right-0 z-30 h-14 sm:h-16 transition-all duration-300 ${
 				sideNavState ? "left-0 lg:left-64 xl:left-72" : "left-0"
 			}`}
 		>
@@ -190,16 +189,25 @@ export default function Header(): JSX.Element {
 												handleOpenDropdown();
 											}
 										}}
-										className="flex w-[180px] md:w-full items-center gap-2 sm:gap-3 p-1.5 lg:p-3 bg-[#204675] hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#1E1B4B] rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border border-[#2D5E9C] cursor-pointer"
+										className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 bg-[#204675] hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#1E1B4B] rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border border-[#2D5E9C] cursor-pointer"
 										aria-label="Seleccionar empresa"
 										aria-expanded={isDropdownOpen && !isClosing}
 										aria-haspopup="listbox"
 									>
-										{/* Ícono*/}
-										<FontAwesomeIcon
-											icon={faBuilding}
-											className="w-3 h-3 sm:w-4 sm:h-4 text-white transition-transform duration-200 shrink-0"
-										/>
+										{/* Ícono de documento/impresora */}
+										<svg
+											className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+											strokeWidth={2}
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+											/>
+										</svg>
 										{/* Texto de la empresa */}
 										<span className="text-white font-medium text-xs sm:text-sm uppercase whitespace-nowrap max-w-[150px] sm:max-w-[200px] lg:max-w-[250px] truncate">
 											{empresaActiva?.nombreComercial || "Seleccionar empresa"}
@@ -261,7 +269,7 @@ export default function Header(): JSX.Element {
 					</div>
 
 					{/* Sección derecha: Botones de acción y perfil de usuario */}
-					<div className="flex items-center gap-2 md:gap-3 lg:gap-4 shrink-0">
+					<div className="flex items-center gap-1 sm:gap-3 lg:gap-4 shrink-0">
 						{/* Botón de Notificaciones */}
 						<button
 							type="button"
@@ -270,7 +278,7 @@ export default function Header(): JSX.Element {
 						>
 							<FontAwesomeIcon
 								icon={faBell}
-								className="w-4 h-4 lg:w-6 lg:h-6"
+								className="w-5 h-5 sm:w-6 sm:h-6"
 							/>
 							{/* Indicador de notificaciones (opcional) */}
 							{/* <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span> */}
@@ -284,7 +292,7 @@ export default function Header(): JSX.Element {
 						>
 							<FontAwesomeIcon
 								icon={faCircleQuestion}
-								className="w-4 h-4 lg:w-6 lg:h-6"
+								className="w-5 h-5 sm:w-6 sm:h-6"
 							/>
 						</button>
 
