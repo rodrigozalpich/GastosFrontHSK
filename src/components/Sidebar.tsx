@@ -12,6 +12,7 @@ import {
 } from "../config/menuConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import IconoSVG from "./IconoSVG";
 
 /**
  * Componente Sidebar - Menú lateral de navegación
@@ -240,15 +241,15 @@ export default function Sidebar(): JSX.Element {
 											handlePageClick(page);
 										}
 									}}
-									className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-[#EEF2FF] transition-colors rounded-md ${
+									className={`group flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-[#EEF2FF] transition-colors rounded-md ${
 										location.pathname === page.link ? "bg-blue-50 border-l-4 border-blue-500" : ""
 									}`}
 								>
 									{page.imageUrl && (
-										<img
+										<IconoSVG
 											src={page.imageUrl}
 											alt={page.name}
-											className="w-4 shrink-0"
+											className="w-4 shrink-0 text-[#808080] group-hover:text-[#4338CA] transition-colors"
 										/>
 									)}
 									<div className="text-[#808080] hover:text-[#4338CA] text-base sm:text-sm flex justify-between items-center w-full min-w-0">
@@ -277,17 +278,17 @@ export default function Sidebar(): JSX.Element {
 														e.preventDefault();
 														handleNestedPageClick(nestedPage);
 													}}
-													className={`flex text-[#808080] hover:text-[#4338CA]  items-center gap-2 ml-4 sm:ml-6 px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-[#EEF2FF] transition-colors rounded-md ${
+													className={`group flex text-[#808080] hover:text-[#4338CA]  items-center gap-2 ml-4 sm:ml-6 px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-[#EEF2FF] transition-colors rounded-md ${
 														location.pathname === nestedPage.link
 															? "bg-[#EEF2FF] border-l-4 border-[#4338CA]"
 															: ""
 													}`}
 												>
 													{nestedPage.imageUrl && (
-														<img
+														<IconoSVG
 															src={nestedPage.imageUrl}
 															alt={nestedPage.name}
-															className="w-3.5 shrink-0"
+															className="w-3.5 shrink-0 text-[#808080] group-hover:text-[#4338CA] transition-colors"
 														/>
 													)}
 													<span className="text-base truncate">

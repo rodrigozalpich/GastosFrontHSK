@@ -108,13 +108,6 @@ export const menuConfigBase: MenuPage[] = [
 		imageUrl: ICONOS_MENU.contabilidad,
 		nestedPages: [
 			{
-				name: "Layout",
-				link: "/layout",
-				imageUrl: ICONOS_MENU.layout,
-				permiso: "SeccionLayout",
-				unico: false,
-			},
-			{
 				name: "Cuentas contables",
 				link: "/cuenta-contable",
 				imageUrl: ICONOS_MENU.cuentaContable,

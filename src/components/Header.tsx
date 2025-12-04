@@ -9,6 +9,7 @@ import {
 	faBell,
 	faCircleQuestion,
 	faRightFromBracket,
+	faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
 
 /**
@@ -189,25 +190,13 @@ export default function Header(): JSX.Element {
 												handleOpenDropdown();
 											}
 										}}
-										className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 bg-[#204675] hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#1E1B4B] rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border border-[#2D5E9C] cursor-pointer"
+										className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 bg-[#204675] hover:bg-[#2046AA] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#1E1B4B] rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border border-[#2D5E9C] cursor-pointer"
 										aria-label="Seleccionar empresa"
 										aria-expanded={isDropdownOpen && !isClosing}
 										aria-haspopup="listbox"
 									>
 										{/* Ícono de documento/impresora */}
-										<svg
-											className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											strokeWidth={2}
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-											/>
-										</svg>
+										<FontAwesomeIcon icon={faBuilding} className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0" />
 										{/* Texto de la empresa */}
 										<span className="text-white font-medium text-xs sm:text-sm uppercase whitespace-nowrap max-w-[150px] sm:max-w-[200px] lg:max-w-[250px] truncate">
 											{empresaActiva?.nombreComercial || "Seleccionar empresa"}
@@ -324,7 +313,7 @@ export default function Header(): JSX.Element {
 								aria-haspopup="menu"
 							>
 								{/* Avatar circular con iniciales */}
-								<div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-teal-500 flex items-center justify-center shrink-0">
+								<div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#52C5E0] border-3 border-[#1C88B1] flex items-center justify-center shrink-0">
 									<span className="text-white font-semibold text-xs sm:text-sm">
 										{inicialesUsuario}
 									</span>
