@@ -1,13 +1,17 @@
 import { type JSX } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { type IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { Tooltip } from "@mui/material";
+import IconoSVG from "./IconoSVG";
 
-export type TableActionButtonVariant = "edit" | "delete" | "toggle" | "custom";
+export type TableActionButtonVariant =
+	| "ver"
+	| "edit"
+	| "delete"
+	| "toggle"
+	| "custom";
 export type TooltipPlacement = "top" | "bottom" | "left" | "right";
 
 interface TableActionButtonProps {
-	icon: IconDefinition;
+	iconSrc: string;
 	onClick: () => void;
 	tooltip: string;
 	variant?: TableActionButtonVariant;
@@ -25,7 +29,7 @@ interface TableActionButtonProps {
  * Basado en el diseño de ActionButton.tsx
  */
 export default function TableActionButton({
-	icon,
+	iconSrc,
 	onClick,
 	tooltip,
 	variant = "custom",
@@ -40,30 +44,51 @@ export default function TableActionButton({
 	const baseClasses = "px-2 py-1 rounded-xl transition-colors cursor-pointer";
 
 	// Clases según la variante
-	const getVariantClasses = (): string => {
+	const getVariantClasses = (): { button: string; icon: string } => {
 		if (customClassName) {
 			// Si hay clase personalizada y está activo, usar la clase activa
 			if (isActive && customActiveClassName) {
-				return customActiveClassName;
+				return { button: customActiveClassName, icon: "" };
 			}
-			return customClassName;
+			return { button: customClassName, icon: "" };
 		}
 
 		switch (variant) {
+			case "ver":
+				return {
+					button: "bg-[#E0F2FE] hover:bg-[#0EA5E9]",
+					icon: "text-[#0369A1] group-hover:text-[#E0F2FE]",
+				};
 			case "edit":
-				return "bg-yellow-500 text-white hover:bg-yellow-600";
+				return {
+					button: "bg-[#CCFBF1] hover:bg-[#14B8A6]",
+					icon: "text-[#15803D] group-hover:text-[#DCFCE7]",
+				};
 			case "delete":
-				return "bg-red-500 text-white hover:bg-red-600";
+				return {
+					button: "bg-[#FEE2E2] hover:bg-[#EF4444]",
+					icon: "text-[#B91C1C] group-hover:text-[#FEE2E2]",
+				};
 			case "toggle":
 				return isActive
-					? "bg-blue-500 text-white hover:bg-blue-600"
-					: "bg-gray-300 text-gray-700 hover:bg-gray-400";
+					? {
+							button: "bg-blue-500 hover:bg-blue-600",
+							icon: "text-white",
+					  }
+					: {
+							button: "bg-gray-300 hover:bg-gray-400",
+							icon: "text-gray-700",
+					  };
 			default:
-				return "bg-gray-500 text-white hover:bg-gray-600";
+				return {
+					button: "bg-gray-500 hover:bg-gray-600",
+					icon: "text-white",
+				};
 		}
 	};
 
 	const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
+	const variantClasses = getVariantClasses();
 
 	return (
 		<Tooltip
@@ -86,12 +111,17 @@ export default function TableActionButton({
 			<button
 				onClick={onClick}
 				disabled={disabled}
-				className={`${baseClasses} ${getVariantClasses()} ${disabledClasses}`}
+				className={`group ${baseClasses} ${variantClasses.button} ${disabledClasses}`}
 				aria-label={tooltip}
 			>
-				{icon && <FontAwesomeIcon icon={icon} size="lg" />}
+				{iconSrc && (
+					<IconoSVG
+						src={iconSrc}
+						alt={tooltip}
+						className={`w-5 h-5 transition-colors ${variantClasses.icon}`}
+					/>
+				)}
 			</button>
 		</Tooltip>
 	);
 }
-

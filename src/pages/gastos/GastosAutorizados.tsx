@@ -14,6 +14,7 @@ import { MRT_Localization_ES } from "../../config/mrtLocalization";
 import { useTituloStore } from "../../services/tituloService";
 import { formatearMoneda } from "../../helpers/formatHelpers";
 import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
+import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
 
 /**
  * Componente de gastos autorizados
@@ -202,6 +203,9 @@ export default function GastosAutorizados(): JSX.Element {
 
 	return (
 		<div className="p-3 sm:p-4 lg:p-6">
+			{/* Botones de navegación siempre visibles */}
+			<BotonesNavegacionGastos />
+			
 			<div className="mb-4 sm:mb-6">
 				<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
 					Gastos Autorizados

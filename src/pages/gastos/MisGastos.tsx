@@ -14,12 +14,14 @@ import { MRT_Localization_ES } from "../../config/mrtLocalization";
 import { useTituloStore } from "../../services/tituloService";
 import ModalGasto from "../../components/ModalGasto";
 import ModalConfirmacion from "../../components/ModalConfirmacion";
-import { faEdit, faEye, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faDollar } from "@fortawesome/free-solid-svg-icons";
 import { useGastos } from "../../hooks/useGastos";
 import TableActionButton from "../../components/TableActionButton";
 import ActionButton from "../../components/ActionButton";
 import { formatearMoneda } from "../../helpers/formatHelpers";
 import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
+import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
+import { ICONOS_ACCIONES } from "../../config/iconosAcciones";
 
 /**
  * Componente de mis gastos usando Material React Table
@@ -185,17 +187,16 @@ export default function MisGastos(): JSX.Element {
 		renderRowActions: ({ row }) => (
 			<div className="flex gap-2">
 				<TableActionButton
-					icon={faEye}
+					iconSrc={ICONOS_ACCIONES.ver}
 					onClick={() => {
 						setGastoSeleccionado(row.original);
 						setModoModal("ver");
 					}}
 					tooltip="Ver"
-					variant="custom"
-					customClassName="bg-blue-500 text-white hover:bg-blue-600"
+					variant="ver"
 				/>
 				<TableActionButton
-					icon={faEdit}
+					iconSrc={ICONOS_ACCIONES.editar}
 					onClick={() => {
 						setGastoSeleccionado(row.original);
 						setModoModal("editar");
@@ -204,7 +205,7 @@ export default function MisGastos(): JSX.Element {
 					variant="edit"
 				/>
 				<TableActionButton
-					icon={faTrash}
+					iconSrc={ICONOS_ACCIONES.eliminar}
 					onClick={() => {
 						setGastoAEliminar(row.original);
 						setMostrarConfirmacionEliminar(true);
@@ -238,6 +239,9 @@ export default function MisGastos(): JSX.Element {
 
 	return (
 		<div className="p-3 sm:p-4 lg:p-6">
+			{/* Botones de navegación siempre visibles */}
+			<BotonesNavegacionGastos />
+			
 			<div className="mb-4 sm:mb-6 flex justify-between items-center">
 				<div>
 					<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Mis Gastos</h1>
@@ -246,13 +250,13 @@ export default function MisGastos(): JSX.Element {
 					</p>
 				</div>
 				<ActionButton
-					variant="create"
 					onClick={() => {
 						setGastoSeleccionado(null);
 						setModoModal("crear");
 					}}
+					icon={faDollar}
 					text="Nuevo Gasto"
-					customClassName="bg-blue-500 text-white hover:bg-blue-600"
+					variant="primary"
 				/>
 			</div>
 

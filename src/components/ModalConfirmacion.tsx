@@ -39,7 +39,6 @@ export default function ModalConfirmacion({
 		if (!abierto) {
 			// eslint-disable-next-line react-hooks/set-state-in-effect
 			setIsClosing(false);
-			 
 			setPendingAction(null);
 		}
 	}, [abierto]);
@@ -61,8 +60,8 @@ export default function ModalConfirmacion({
 	}
 
 	const colorClasses = {
-		red: "bg-red-500 hover:bg-red-600",
-		blue: "bg-blue-500 hover:bg-blue-600",
+		red: "bg-[#DC2626] hover:bg-[#7F1D1D]",
+		blue: "bg-[#0369A1] hover:bg-[#082F49]",
 		green: "bg-green-500 hover:bg-green-600",
 		yellow: "bg-yellow-500 hover:bg-yellow-600",
 	};
@@ -110,7 +109,7 @@ export default function ModalConfirmacion({
 					</div>
 					<button
 						onClick={handleClose}
-						className="text-gray-400 hover:text-gray-600 transition-colors"
+						className="cursor-pointer text-gray-400 hover:text-rose-600 transition-colors"
 						aria-label="Cerrar"
 					>
 						<FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
@@ -124,7 +123,7 @@ export default function ModalConfirmacion({
 					{/* Botones */}
 					<div className="flex gap-3 justify-end">
 						<ActionButton
-							variant="cancel"
+							variant="secondary"
 							type="button"
 							onClick={handleClose}
 							text={textoCancelar}

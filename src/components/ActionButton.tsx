@@ -2,9 +2,18 @@ import { type JSX } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { faPlus, faTimes, faSave, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip } from "@mui/material";
 
-export type ActionButtonVariant = "cancel" | "submit" | "create" | "save" | "primary" | "secondary" | "custom";
+export type ActionButtonVariant =
+	| "cancel"
+	| "submit"
+	| "create"
+	| "save"
+	| "primary"
+	| "secondary"
+	| "custom";
 export type ActionButtonType = "button" | "submit" | "reset";
+export type TooltipPlacement = "top" | "bottom" | "left" | "right";
 
 interface ActionButtonProps {
 	onClick?: () => void;
@@ -19,6 +28,7 @@ interface ActionButtonProps {
 	showText?: boolean; // Si es false, siempre oculta el texto (útil para móvil)
 	ariaLabel?: string;
 	tooltip?: string; // Texto para tooltip (opcional)
+	tooltipPlacement?: TooltipPlacement; // Posición del tooltip
 	className?: string; // Clase CSS adicional (opcional)
 }
 
@@ -40,10 +50,12 @@ export default function ActionButton({
 	showText = true,
 	ariaLabel,
 	tooltip,
+	tooltipPlacement = "top",
 	className = "",
 }: ActionButtonProps): JSX.Element {
 	// Clases base
-	const baseClasses = "cursor-pointer px-4 py-2 rounded transition-colors flex items-center gap-2";
+	const baseClasses =
+		"cursor-pointer px-4 py-2 rounded-xl transition-colors flex items-center gap-2";
 
 	// Icono por defecto según la variante
 	const getDefaultIcon = (): IconDefinition | null => {
@@ -71,11 +83,11 @@ export default function ActionButton({
 
 		switch (variant) {
 			case "cancel":
-				return "bg-gray-200 text-gray-800 hover:bg-gray-300";
+				return "bg-[#DC2626] text-[#F0F5F8] hover:bg-[#7F1D1D]";
 			case "submit":
 			case "save":
 			case "primary":
-				return "bg-blue-500 text-white hover:bg-blue-600";
+				return "bg-[#0284C7] text-white hover:bg-[#075985]";
 			case "create":
 				return "bg-green-600 text-white hover:bg-green-700";
 			case "secondary":
@@ -85,7 +97,8 @@ export default function ActionButton({
 		}
 	};
 
-	const disabledClasses = disabled || isLoading ? "opacity-50 cursor-not-allowed" : "";
+	const disabledClasses =
+		disabled || isLoading ? "opacity-50 cursor-not-allowed" : "";
 	const defaultIcon = getDefaultIcon();
 	const displayText = isLoading && loadingText ? loadingText : text;
 	const finalDisabled = disabled || isLoading;
@@ -102,16 +115,44 @@ export default function ActionButton({
 			className={finalClassName}
 			disabled={finalDisabled}
 			aria-label={ariaLabel || text}
-			title={tooltip}
 		>
-			{defaultIcon && <FontAwesomeIcon icon={defaultIcon} className="w-4 h-4" />}
-			{showText && <span className={variant === "create" ? "hidden sm:inline" : ""}>{displayText}</span>}
+			{defaultIcon && (
+				<FontAwesomeIcon
+					icon={defaultIcon}
+					className="w-4 h-4"
+				/>
+			)}
+			{showText && (
+				<span className={variant === "create" ? "hidden sm:inline" : ""}>
+					{displayText}
+				</span>
+			)}
 		</button>
 	);
 
-	// Si hay tooltip, envolver en un div con title
+	// Si hay tooltip, envolver en Tooltip de Material-UI
 	if (tooltip) {
-		return <div title={tooltip}>{button}</div>;
+		return (
+			<Tooltip
+				title={tooltip}
+				placement={tooltipPlacement}
+				arrow
+				slotProps={{
+					popper: {
+						modifiers: [
+							{
+								name: "offset",
+								options: {
+									offset: [0, -8],
+								},
+							},
+						],
+					},
+				}}
+			>
+				{button}
+			</Tooltip>
+		);
 	}
 
 	return button;

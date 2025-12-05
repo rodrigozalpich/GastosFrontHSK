@@ -503,15 +503,16 @@ export default function ConfiguracionArbol({
 						type="button"
 						text="Agregar Nivel"
 						onClick={agregarNivel}
-						className="bg-blue-500 hover:bg-blue-600 text-white"
+						className="text-white transition-colors"
 					/>
 					<CustomButton
 						type="button"
 						text="Guardar Cambios"
+						variant="success"
 						onClick={() => setMostrarConfirmacionGuardar(true)}
 						disabled={!hayCambios || crearRelacionMutation.isPending}
 						isLoading={crearRelacionMutation.isPending}
-						className="bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300"
+						className="text-white disabled:bg-gray-300"
 					/>
 				</div>
 			</div>
@@ -571,14 +572,13 @@ export default function ConfiguracionArbol({
 											disabled={
 												autorizadoresDisponiblesParaSeleccionar.length === 0
 											}
-											className="bg-blue-500 hover:bg-blue-600 text-white text-sm"
+											className="text-white text-sm"
 										/>
 										<ActionButton
 											icon={faTrash}
 											tooltip="Eliminar nivel"
 											text="Eliminar"
-											variant="custom"
-											customClassName="bg-red-500 text-white hover:bg-red-600"
+											variant="cancel"
 											onClick={() => eliminarNivel(nivel.nivel)}
 											showText={false}
 										/>
@@ -603,8 +603,7 @@ export default function ConfiguracionArbol({
 														icon={faTimes}
 														tooltip="Eliminar"
 														text="Eliminar"
-														variant="custom"
-														customClassName="bg-red-500 text-white hover:bg-red-600"
+														variant="cancel"
 														onClick={() =>
 															eliminarAutorizadorDeNivel(nivel.nivel, autorizador)
 														}
@@ -645,7 +644,7 @@ export default function ConfiguracionArbol({
 
 			{/* Modal de selección de autorizadores */}
 			{mostrarSelectorAutorizadores && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/20 backdrop-blur-sm">
 					<div className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
 						<div className="flex items-center justify-between mb-4">
 							<h3 className="text-lg font-semibold">

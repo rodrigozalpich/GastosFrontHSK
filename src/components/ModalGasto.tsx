@@ -406,13 +406,13 @@ export default function ModalGasto({
 					{!esModoLectura && (
 						<div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
 							<ActionButton
-								variant="cancel"
+								variant="secondary"
 								type="button"
 								onClick={handleClose}
 								text="Cancelar"
 							/>
 							<ActionButton
-								variant="submit"
+								variant="primary"
 								type="submit"
 								text={modo === "crear" ? "Crear" : "Guardar"}
 								isLoading={isCreating || isUpdating}
@@ -425,7 +425,7 @@ export default function ModalGasto({
 					{esModoLectura && (
 						<div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
 							<ActionButton
-								variant="cancel"
+								variant="primary"
 								type="button"
 								onClick={handleClose}
 								text="Cerrar"

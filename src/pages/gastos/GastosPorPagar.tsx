@@ -6,10 +6,16 @@ import {
 } from "material-react-table";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { gastoService } from "../../services/gastoService";
+import { cuentaContableService } from "../../services/cuentaContableService";
 import { useAuthStore } from "../../store/authStore";
 import Loader from "../../components/Loader";
 import { useNotificacionStore } from "../../store/notificacionStore";
-import type { GastoDTO, MovimientosCuentaContableDTO } from "../../types/gastos";
+import type {
+	GastoDTO,
+	MovimientosCuentaContableDTO,
+	CuentaContableGastosDTO,
+} from "../../types/gastos";
+import AutocompleteSelectField from "../../components/AutocompleteSelectField";
 import { MRT_Localization_ES } from "../../config/mrtLocalization";
 import { useTituloStore } from "../../services/tituloService";
 import { faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
@@ -17,6 +23,7 @@ import TableActionButton from "../../components/TableActionButton";
 import ActionButton from "../../components/ActionButton";
 import { formatearMoneda } from "../../helpers/formatHelpers";
 import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
+import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
 
 /**
  * Componente de gastos por pagar
@@ -26,7 +33,9 @@ import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
  */
 export default function GastosPorPagar(): JSX.Element {
 	const { obtenerIdEmpresa, permisosEspeciales } = useAuthStore();
-	const mostrarNotificacion = useNotificacionStore((state) => state.mostrarNotificacion);
+	const mostrarNotificacion = useNotificacionStore(
+		(state) => state.mostrarNotificacion
+	);
 	const { actualizarTitulo } = useTituloStore();
 	const queryClient = useQueryClient();
 	const idEmpresa = obtenerIdEmpresa();
@@ -34,7 +43,9 @@ export default function GastosPorPagar(): JSX.Element {
 		? parseInt(permisosEspeciales.idUsuario, 10)
 		: null;
 
-	const [gastoSeleccionado, setGastoSeleccionado] = useState<GastoDTO | null>(null);
+	const [gastoSeleccionado, setGastoSeleccionado] = useState<GastoDTO | null>(
+		null
+	);
 	const [mostrarModalPago, setMostrarModalPago] = useState(false);
 	const [archivoPago, setArchivoPago] = useState<File | null>(null);
 	const [idCuentaContable, setIdCuentaContable] = useState<number>(0);
@@ -63,6 +74,26 @@ export default function GastosPorPagar(): JSX.Element {
 		enabled: !!idEmpresa && !!idUsuario,
 	});
 
+	// Query para obtener cuentas contables por plaza del empleado
+	const { data: cuentasContables } = useQuery({
+		queryKey: [
+			"cuentasContablesPorPlaza",
+			idEmpresa,
+			gastoSeleccionado?.idPlazaEmpleado,
+		],
+		queryFn: async () => {
+			if (!idEmpresa || !gastoSeleccionado?.idPlazaEmpleado) {
+				throw new Error("Faltan datos de empresa o plaza de empleado");
+			}
+			return await cuentaContableService.obtenerPorPlaza(
+				gastoSeleccionado.idPlazaEmpleado,
+				idEmpresa
+			);
+		},
+		enabled:
+			!!idEmpresa && !!gastoSeleccionado?.idPlazaEmpleado && mostrarModalPago,
+	});
+
 	// Mutation para pagar gasto
 	const pagarGasto = useMutation({
 		mutationFn: async (gasto: GastoDTO) => {
@@ -84,7 +115,11 @@ export default function GastosPorPagar(): JSX.Element {
 				estatus: 1,
 			};
 
-			return await gastoService.pagarElGasto(archivoPago, idEmpresa, movimiento);
+			return await gastoService.pagarElGasto(
+				archivoPago,
+				idEmpresa,
+				movimiento
+			);
 		},
 		onSuccess: () => {
 			// Invalidar todas las queries relacionadas con gastos
@@ -99,7 +134,9 @@ export default function GastosPorPagar(): JSX.Element {
 		},
 		onError: (error) => {
 			mostrarNotificacion(
-				`Error al pagar gasto: ${error instanceof Error ? error.message : "Error desconocido"}`,
+				`Error al pagar gasto: ${
+					error instanceof Error ? error.message : "Error desconocido"
+				}`,
 				"error"
 			);
 		},
@@ -213,7 +250,9 @@ export default function GastosPorPagar(): JSX.Element {
 
 	if (isError) {
 		mostrarNotificacion(
-			`Error al cargar gastos: ${error instanceof Error ? error.message : "Error desconocido"}`,
+			`Error al cargar gastos: ${
+				error instanceof Error ? error.message : "Error desconocido"
+			}`,
 			"error"
 		);
 		return (
@@ -229,6 +268,9 @@ export default function GastosPorPagar(): JSX.Element {
 
 	return (
 		<div className="p-3 sm:p-4 lg:p-6">
+			{/* Botones de navegación siempre visibles */}
+			<BotonesNavegacionGastos />
+
 			<div className="mb-4 sm:mb-6">
 				<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
 					Gastos por Pagar
@@ -245,9 +287,11 @@ export default function GastosPorPagar(): JSX.Element {
 
 			{/* Modal de Pago */}
 			{(mostrarModalPago || isClosingPago) && gastoSeleccionado && (
-				<div 
+				<div
 					className={`fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-50 flex items-center justify-center p-4 ${
-						isClosingPago ? "animate-modal-overlay-out" : "animate-modal-overlay-in"
+						isClosingPago
+							? "animate-modal-overlay-out"
+							: "animate-modal-overlay-in"
 					}`}
 					onClick={() => {
 						if (!isClosingPago) {
@@ -255,9 +299,11 @@ export default function GastosPorPagar(): JSX.Element {
 						}
 					}}
 				>
-					<div 
+					<div
 						className={`bg-white rounded-lg shadow-xl max-w-md w-full p-6 ${
-							isClosingPago ? "animate-modal-content-out" : "animate-modal-content-in"
+							isClosingPago
+								? "animate-modal-content-out"
+								: "animate-modal-content-in"
 						}`}
 						onClick={(e) => e.stopPropagation()}
 						onAnimationEnd={(e) => {
@@ -288,18 +334,20 @@ export default function GastosPorPagar(): JSX.Element {
 								<strong>Presupuesto:</strong> $
 								{formatearMoneda(gastoSeleccionado.presupuesto, false)}
 							</p>
-							<div>
-								<label className="block text-gray-700 font-medium mb-2">
-									ID Cuenta Contable:
-								</label>
-								<input
-									type="number"
-									value={idCuentaContable || ""}
-									onChange={(e) => setIdCuentaContable(parseInt(e.target.value, 10) || 0)}
-									className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-									placeholder="Ingrese el ID de cuenta contable"
-								/>
-							</div>
+							<AutocompleteSelectField
+								value={idCuentaContable}
+								onChange={setIdCuentaContable}
+								options={
+									(cuentasContables || []) as Array<
+										CuentaContableGastosDTO & { [key: string]: unknown }
+									>
+								}
+								label="Cuenta Contable"
+								required
+								displayField="descripcion"
+								placeholder="Seleccione una cuenta contable"
+								emptyLabel="Sin seleccionar"
+							/>
 							<div>
 								<label className="block text-gray-700 font-medium mb-2">
 									Archivo de comprobante (opcional):
@@ -314,7 +362,7 @@ export default function GastosPorPagar(): JSX.Element {
 						</div>
 						<div className="flex gap-3 justify-end">
 							<ActionButton
-								variant="cancel"
+								variant="secondary"
 								type="button"
 								onClick={() => {
 									if (!isClosingPago) {
@@ -327,7 +375,11 @@ export default function GastosPorPagar(): JSX.Element {
 								variant="custom"
 								type="button"
 								onClick={() => {
-									if (!isClosingPago && gastoSeleccionado && !pagarGasto.isPending) {
+									if (
+										!isClosingPago &&
+										gastoSeleccionado &&
+										!pagarGasto.isPending
+									) {
 										// Ejecutar la mutación inmediatamente, sin cerrar el modal
 										pagarGasto.mutate(gastoSeleccionado);
 									}
@@ -335,7 +387,12 @@ export default function GastosPorPagar(): JSX.Element {
 								text="Pagar"
 								isLoading={pagarGasto.isPending}
 								loadingText="Pagando..."
-								disabled={pagarGasto.isPending || !idCuentaContable || idCuentaContable === 0 || isClosingPago}
+								disabled={
+									pagarGasto.isPending ||
+									!idCuentaContable ||
+									idCuentaContable === 0 ||
+									isClosingPago
+								}
 								customClassName="bg-green-500 text-white hover:bg-green-600"
 							/>
 						</div>

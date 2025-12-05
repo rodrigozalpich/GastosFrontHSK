@@ -17,6 +17,7 @@ import TableActionButton from "../../components/TableActionButton";
 import ActionButton from "../../components/ActionButton";
 import { formatearMoneda } from "../../helpers/formatHelpers";
 import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
+import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
 
 /**
  * Componente de gastos por autorizar
@@ -284,6 +285,9 @@ export default function GastosPorAutorizar(): JSX.Element {
 
 	return (
 		<div className="p-3 sm:p-4 lg:p-6">
+			{/* Botones de navegación siempre visibles */}
+			<BotonesNavegacionGastos />
+			
 			<div className="mb-4 sm:mb-6">
 				<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
 					Gastos por Autorizar
