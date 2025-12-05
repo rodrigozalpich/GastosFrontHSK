@@ -43,11 +43,13 @@ export default function IconoSVG({
 				modifiedSvg = modifiedSvg.replace(
 					/fill="[^"]*"/g,
 					(match) => {
-						// Si es un color (hex, rgb, etc), reemplazarlo por currentColor
-						if (match.match(/fill="(#[0-9A-Fa-f]{3,6}|rgb|rgba|currentColor)"/)) {
-							return 'fill="currentColor"';
+						// Si es fill="none", mantenerlo
+						if (match === 'fill="none"') {
+							return match;
 						}
-						return match; // Mantener fill="none" u otros valores
+						// Cualquier otro valor de fill (colores hex, rgb, nombres de colores, etc) 
+						// reemplazarlo por currentColor
+						return 'fill="currentColor"';
 					}
 				);
 				
@@ -120,6 +122,11 @@ export default function IconoSVG({
 		return <div className={`w-4 h-4 ${className}`} />;
 	}
 
+	// Extraer clases de color de className para aplicarlas directamente
+	const colorClasses = className.split(' ').filter(cls => 
+		cls.startsWith('text-') || cls.startsWith('group-hover:')
+	).join(' ');
+
 	return (
 		<span
 			className={`inline-flex items-center justify-center ${className}`}
@@ -128,7 +135,7 @@ export default function IconoSVG({
 			<span
 				dangerouslySetInnerHTML={{ __html: svgContent }}
 				aria-label={alt}
-				className="block"
+				className={`block ${colorClasses || className}`}
 				style={{ width: '100%', height: '100%' }}
 			/>
 		</span>

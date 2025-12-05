@@ -27,6 +27,7 @@ export const ROUTES = {
 	LANDING: "/",
 	DASHBOARD: "/dashboard",
 	// Gestión de Gastos
+	GESTION_DE_GASTOS: "/gastos/listado",
 	GASTOS_LISTADO: "/gastos/listado",
 	GASTOS_MIS_GASTOS: "/gastos/mis-gastos",
 	GASTOS_POR_AUTORIZAR: "/gastos/por-autorizar",

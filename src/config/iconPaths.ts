@@ -15,6 +15,9 @@ export const ICONOS_MENU = {
 	// Gastos
 	gastos: "/assets/iconos/gastos.svg",
 	gestionGastos: "/assets/iconos/gestionGastos.svg",
+	misGastos: "/assets/iconos/misGastos.svg",
+	gastosPorPagar: "/assets/iconos/gastosPorPagar.svg",
+	listadoDeGastos: "/assets/iconos/listadoDeGastos.svg",
 	datosEmpleado: "/assets/iconos/datosEmpleado.svg",
 
 	// Configuración
