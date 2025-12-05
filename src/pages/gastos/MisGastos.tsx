@@ -5,6 +5,7 @@ import {
 	type MRT_ColumnDef,
 } from "material-react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 import { gastoService } from "../../services/gastoService";
 import { useAuthStore } from "../../store/authStore";
 import Loader from "../../components/Loader";
@@ -22,6 +23,7 @@ import { formatearMoneda } from "../../helpers/formatHelpers";
 import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
 import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
 import { ICONOS_ACCIONES } from "../../config/iconosAcciones";
+import { ROUTES } from "../../config/routes.config";
 
 /**
  * Componente de mis gastos usando Material React Table
@@ -30,16 +32,22 @@ import { ICONOS_ACCIONES } from "../../config/iconosAcciones";
  * @returns {JSX.Element} El componente de mis gastos
  */
 export default function MisGastos(): JSX.Element {
+	const navigate = useNavigate();
 	const { obtenerIdEmpresa, permisosEspeciales } = useAuthStore();
-	const mostrarNotificacion = useNotificacionStore((state) => state.mostrarNotificacion);
+	const mostrarNotificacion = useNotificacionStore(
+		(state) => state.mostrarNotificacion
+	);
 	const { actualizarTitulo } = useTituloStore();
 	const idEmpresa = obtenerIdEmpresa();
 	const idUsuario = permisosEspeciales?.idUsuario
 		? parseInt(permisosEspeciales.idUsuario, 10)
 		: null;
-	const [gastoSeleccionado, setGastoSeleccionado] = useState<GastoDTO | null>(null);
-	const [modoModal, setModoModal] = useState<"crear" | "editar" | "ver" | null>(null);
-	const [mostrarConfirmacionEliminar, setMostrarConfirmacionEliminar] = useState(false);
+	const [gastoSeleccionado, setGastoSeleccionado] = useState<GastoDTO | null>(
+		null
+	);
+	const [modoModal, setModoModal] = useState<"crear" | "editar" | null>(null);
+	const [mostrarConfirmacionEliminar, setMostrarConfirmacionEliminar] =
+		useState(false);
 	const [gastoAEliminar, setGastoAEliminar] = useState<GastoDTO | null>(null);
 	const { eliminarGasto } = useGastos();
 
@@ -92,21 +100,33 @@ export default function MisGastos(): JSX.Element {
 				size: 150,
 				Cell: ({ cell }) => {
 					const estatus = cell.getValue<number>();
-				const estatusMap: Record<number, { label: string; className: string }> = {
-					1: { label: "Abierto", className: "bg-green-100 text-green-800" },
-					2: { label: "Finalizado", className: "bg-gray-100 text-gray-800" },
-					3: { label: "Autorizado", className: "bg-blue-100 text-blue-800" },
-					4: { label: "No Autorizado", className: "bg-red-100 text-red-800" },
-					5: { label: "Pendiente de Pago", className: "bg-yellow-100 text-yellow-800" },
-					6: { label: "Pagado", className: "bg-green-100 text-green-800" },
-					7: { label: "En proceso de Autorización", className: "bg-purple-100 text-purple-800" },
-					8: { label: "En devolución", className: "bg-orange-100 text-orange-800" },
-					9: { label: "Cancelado", className: "bg-red-100 text-red-800" },
-				};
-				const estado = estatusMap[estatus] || {
-					label: "Desconocido",
-					className: "bg-gray-100 text-gray-800",
-				};
+					const estatusMap: Record<
+						number,
+						{ label: string; className: string }
+					> = {
+						1: { label: "Abierto", className: "bg-green-100 text-green-800" },
+						2: { label: "Finalizado", className: "bg-gray-100 text-gray-800" },
+						3: { label: "Autorizado", className: "bg-blue-100 text-blue-800" },
+						4: { label: "No Autorizado", className: "bg-red-100 text-red-800" },
+						5: {
+							label: "Pendiente de Pago",
+							className: "bg-yellow-100 text-yellow-800",
+						},
+						6: { label: "Pagado", className: "bg-green-100 text-green-800" },
+						7: {
+							label: "En proceso de Autorización",
+							className: "bg-purple-100 text-purple-800",
+						},
+						8: {
+							label: "En devolución",
+							className: "bg-orange-100 text-orange-800",
+						},
+						9: { label: "Cancelado", className: "bg-red-100 text-red-800" },
+					};
+					const estado = estatusMap[estatus] || {
+						label: "Desconocido",
+						className: "bg-gray-100 text-gray-800",
+					};
 					return (
 						<span
 							className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${estado.className}`}
@@ -189,8 +209,12 @@ export default function MisGastos(): JSX.Element {
 				<TableActionButton
 					iconSrc={ICONOS_ACCIONES.ver}
 					onClick={() => {
-						setGastoSeleccionado(row.original);
-						setModoModal("ver");
+						navigate(
+							ROUTES.GASTOS_DETALLE.replace(
+								":gastoId",
+								row.original.id.toString()
+							)
+						);
 					}}
 					tooltip="Ver"
 					variant="ver"
@@ -223,7 +247,9 @@ export default function MisGastos(): JSX.Element {
 
 	if (isError) {
 		mostrarNotificacion(
-			`Error al cargar gastos: ${error instanceof Error ? error.message : "Error desconocido"}`,
+			`Error al cargar gastos: ${
+				error instanceof Error ? error.message : "Error desconocido"
+			}`,
 			"error"
 		);
 		return (
@@ -241,10 +267,12 @@ export default function MisGastos(): JSX.Element {
 		<div className="p-3 sm:p-4 lg:p-6">
 			{/* Botones de navegación siempre visibles */}
 			<BotonesNavegacionGastos />
-			
+
 			<div className="mb-4 sm:mb-6 flex justify-between items-center">
 				<div>
-					<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Mis Gastos</h1>
+					<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+						Mis Gastos
+					</h1>
 					<p className="text-sm sm:text-base text-gray-600">
 						Total de gastos: {gastos?.length || 0}
 					</p>
@@ -281,7 +309,9 @@ export default function MisGastos(): JSX.Element {
 			<ModalConfirmacion
 				abierto={mostrarConfirmacionEliminar}
 				titulo="Eliminar Gasto"
-				mensaje={`¿Está seguro de que desea eliminar el gasto "${gastoAEliminar?.nombre || ""}"? Esta acción no se puede deshacer.`}
+				mensaje={`¿Está seguro de que desea eliminar el gasto "${
+					gastoAEliminar?.nombre || ""
+				}"? Esta acción no se puede deshacer.`}
 				textoConfirmar="Eliminar"
 				textoCancelar="Cancelar"
 				colorConfirmar="red"

@@ -32,6 +32,7 @@ export function useGastos() {
 	const mostrarNotificacion = useNotificacionStore((state) => state.mostrarNotificacion);
 	const {
 		setGastos,
+		eliminarGasto: eliminarGastoStore,
 		filtrosComplejos,
 	} = useGastoStore();
 
@@ -53,7 +54,10 @@ export function useGastos() {
 			if (!idEmpresa || !idUsuario) {
 				throw new Error("Faltan datos de empresa o usuario");
 			}
-			const gastosObtenidos = await gastoService.obtenerGastos(idUsuario, idEmpresa);
+			const gastosObtenidos = await gastoService.obtenerGastos(
+				idUsuario,
+				idEmpresa
+			);
 			setGastos(gastosObtenidos);
 			return gastosObtenidos;
 		},
@@ -84,7 +88,9 @@ export function useGastos() {
 		},
 		onError: (error) => {
 			mostrarNotificacion(
-				`Error al crear gasto: ${error instanceof Error ? error.message : "Error desconocido"}`,
+				`Error al crear gasto: ${
+					error instanceof Error ? error.message : "Error desconocido"
+				}`,
 				"error"
 			);
 		},
@@ -109,7 +115,9 @@ export function useGastos() {
 		},
 		onError: (error) => {
 			mostrarNotificacion(
-				`Error al actualizar gasto: ${error instanceof Error ? error.message : "Error desconocido"}`,
+				`Error al actualizar gasto: ${
+					error instanceof Error ? error.message : "Error desconocido"
+				}`,
 				"error"
 			);
 		},
@@ -123,18 +131,62 @@ export function useGastos() {
 			}
 			return await gastoService.borrarGasto(gasto, idEmpresa);
 		},
-		onSuccess: () => {
-			// Invalidar todas las queries relacionadas con gastos
+		onSuccess: (_, gastoEliminado) => {
+			// Actualizar el store de Zustand
+			eliminarGastoStore(gastoEliminado.id);
+
+			// Actualizar el cache manualmente removiendo el gasto eliminado
+			// Esto asegura que la UI se actualice inmediatamente
+			queryClient.setQueriesData<GastoDTO[]>(
+				{ queryKey: ["misGastos"] },
+				(oldData) => {
+					if (!oldData) return oldData;
+					return oldData.filter((g) => g.id !== gastoEliminado.id);
+				}
+			);
+			queryClient.setQueriesData<GastoDTO[]>(
+				{ queryKey: ["gastos"] },
+				(oldData) => {
+					if (!oldData) return oldData;
+					return oldData.filter((g) => g.id !== gastoEliminado.id);
+				}
+			);
+			queryClient.setQueriesData<GastoDTO[]>(
+				{ queryKey: ["gastosPorAutorizar"] },
+				(oldData) => {
+					if (!oldData) return oldData;
+					return oldData.filter((g) => g.id !== gastoEliminado.id);
+				}
+			);
+			queryClient.setQueriesData<GastoDTO[]>(
+				{ queryKey: ["gastosAutorizados"] },
+				(oldData) => {
+					if (!oldData) return oldData;
+					return oldData.filter((g) => g.id !== gastoEliminado.id);
+				}
+			);
+			queryClient.setQueriesData<GastoDTO[]>(
+				{ queryKey: ["gastosPorPagar"] },
+				(oldData) => {
+					if (!oldData) return oldData;
+					return oldData.filter((g) => g.id !== gastoEliminado.id);
+				}
+			);
+
+			// También invalidar para forzar refetch en background
 			void queryClient.invalidateQueries({ queryKey: ["gastos"] });
 			void queryClient.invalidateQueries({ queryKey: ["misGastos"] });
 			void queryClient.invalidateQueries({ queryKey: ["gastosPorAutorizar"] });
 			void queryClient.invalidateQueries({ queryKey: ["gastosAutorizados"] });
 			void queryClient.invalidateQueries({ queryKey: ["gastosPorPagar"] });
+
 			mostrarNotificacion("Gasto eliminado exitosamente", "success");
 		},
 		onError: (error) => {
 			mostrarNotificacion(
-				`Error al eliminar gasto: ${error instanceof Error ? error.message : "Error desconocido"}`,
+				`Error al eliminar gasto: ${
+					error instanceof Error ? error.message : "Error desconocido"
+				}`,
 				"error"
 			);
 		},

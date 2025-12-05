@@ -29,6 +29,7 @@ export interface GastoDTO {
 	descripArchivoJustificante: string | null;
 	pendientePago: boolean;
 	fechaCierre: Date | string | null;
+	timbrado: boolean;
 	borrado: boolean;
 	nivelSiguiente: number;
 	autorizador: string | null;
@@ -52,7 +53,7 @@ export interface GastoDTO {
 	nombreEmpleado: string;
 	esPrimeraVuelta: boolean | null;
 	notieneCFDI: boolean;
-	Aceptado: number;
+	aceptado: number;
 	tieneDevolucion: boolean;
 	editable: boolean;
 }

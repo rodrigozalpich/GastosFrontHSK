@@ -18,6 +18,7 @@ const LandingPage = lazy(() => import("./pages/LandingPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ListadoGastos = lazy(() => import("./pages/gastos/ListadoGastos"));
 const MisGastos = lazy(() => import("./pages/gastos/MisGastos"));
+const GastoDetalle = lazy(() => import("./pages/gastos/GastoDetalle"));
 const GastosPorAutorizar = lazy(() => import("./pages/gastos/GastosPorAutorizar"));
 const GastosAutorizados = lazy(() => import("./pages/gastos/GastosAutorizados"));
 const GastosPorPagar = lazy(() => import("./pages/gastos/GastosPorPagar"));
@@ -114,6 +115,10 @@ function App(): JSX.Element {
 							<Route
 								path={ROUTES.GASTOS_MIS_GASTOS}
 								element={<MisGastos />}
+							/>
+							<Route
+								path={ROUTES.GASTOS_DETALLE}
+								element={<GastoDetalle />}
 							/>
 							<Route element={<RutaAutorizador />}>
 								<Route

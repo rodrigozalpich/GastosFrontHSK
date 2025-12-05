@@ -78,12 +78,12 @@ export default function BotonesNavegacionGastos(): JSX.Element {
 						<button
 							key={boton.link}
 							onClick={() => navegarARuta(boton.link)}
-							className={`group cursor-pointer rounded-lg items-center px-6 py-2 flex font-medium tracking-wider text-center transition-all duration-200 shadow-md hover:shadow-lg min-w-[200px] justify-center ${estaActivo ? "bg-[#E0E7FF] text-[#818CF8]" : "bg-[#312E81] text-[#F0F5F8] hover:bg-[#E0E7FF] hover:text-[#818CF8]"}`}
+							className={`group cursor-pointer rounded-lg items-center px-6 py-2 flex font-medium tracking-wider text-center transition-all duration-200 shadow-md hover:shadow-lg min-w-[200px] justify-center ${estaActivo ? "bg-[#312E81] text-[#F0F5F8]" : "bg-[#E0E7FF] text-[#818CF8] hover:text-[#3730A3]"}`}
 						>
 							<IconoSVG
 								src={boton.imageUrl}
 								alt={boton.name}
-								className={`w-5 mr-3 mt-[2.25px] ${estaActivo ? "text-[#818CF8]" : "text-[#F0F5F8] group-hover:text-[#818CF8]"}`}
+								className={`w-5 mr-3 mt-[2.25px] ${estaActivo ? "text-[#F0F5F8]" : "text-[#818CF8] group-hover:text-[#3730A3]"}`}
 							/>
 							<span className="text-base">{boton.name}</span>
 						</button>

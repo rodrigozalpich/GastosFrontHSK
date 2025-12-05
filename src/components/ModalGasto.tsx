@@ -193,32 +193,33 @@ export default function ModalGasto({
 				esAnticipo: formData.esAnticipo || false,
 				idArchivoJustificante: null,
 				descripArchivoJustificante: null,
-				pendientePago: false,
+				pendientePago: true, // En Angular se establece como true al crear
 				fechaCierre: null,
+				timbrado: false,
 				borrado: false,
-				nivelSiguiente: 0,
-				autorizador: null,
+				nivelSiguiente: 1, // En Angular se inicializa en 1 para nuevo gasto
+				autorizador: "",
 				idAutorizador: 0,
 				nivelAutorizador: 0,
-				validacionAutorizacion: null,
+				validacionAutorizacion: false, // No nullable en backend
 				devolucionTotal: 0,
-				esDevolucion: null,
+				esDevolucion: false, // No nullable en backend
 				remanente: 0,
-				nivelMaximo: null,
+				nivelMaximo: false, // No nullable en backend (aunque el tipo permite null, el modelo C# es bool)
 				nombreASiguiente: [],
 				siguienteAutorizador: "",
 				editarRechazado: null,
-				devolucionPagada: null,
+				devolucionPagada: false, // No nullable en backend
 				tienePolizaDiario: false,
 				tienePolizaIngreso: false,
 				tienePolizaEgreso: false,
 				seleccionado: false,
 				nombreEmpleado: "",
-				esPrimeraVuelta: null,
+				esPrimeraVuelta: false, // No nullable en backend
 				notieneCFDI: false,
-				Aceptado: 0,
+				aceptado: 0,
 				tieneDevolucion: false,
-				editable: true,
+				editable: false, // En Angular se inicializa como false
 			};
 
 			crearGasto(gastoCompleto, {

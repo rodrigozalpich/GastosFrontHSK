@@ -88,9 +88,23 @@ class GastoService {
 	 * @throws Error si la petición falla o los datos son inválidos
 	 */
 	async crearGasto(registro: GastoDTO, idEmpresa: number): Promise<RespuestaDTO> {
+		// Preparar el objeto para el backend según el ejemplo de Swagger
+		// El objeto se envía directamente (sin envolver) como muestra Swagger
+		// Campos boolean no nullable deben ser boolean, no null
+		const gastoParaEnviar: GastoDTO = {
+			...registro,
+			// Campos boolean no nullable (según modelo C#: public bool ... { get; set; })
+			validacionAutorizacion: registro.validacionAutorizacion ?? false,
+			esDevolucion: registro.esDevolucion ?? false,
+			nivelMaximo: registro.nivelMaximo ?? false,
+			// Asegurar campos que pueden faltar
+			timbrado: registro.timbrado ?? false,
+		};
+
+		// Enviar el objeto directamente según el ejemplo de Swagger (sin envolver)
 		const response = await apiBACK.post<RespuestaDTO>(
 			`${this.apiUrl}/${idEmpresa}/CrearGasto`,
-			registro
+			gastoParaEnviar
 		);
 		return response.data;
 	}
@@ -119,12 +133,11 @@ class GastoService {
 	/**
 	 * Borra un gasto (soft delete)
 	 */
-	async borrarGasto(registro: GastoDTO, idEmpresa: number): Promise<RespuestaDTO> {
-		const response = await apiBACK.put<RespuestaDTO>(
+	async borrarGasto(registro: GastoDTO, idEmpresa: number): Promise<void> {
+		await apiBACK.put<RespuestaDTO>(
 			`${this.apiUrl}/${idEmpresa}/BorrarGasto`,
 			registro
 		);
-		return response.data;
 	}
 
 	//#endregion
