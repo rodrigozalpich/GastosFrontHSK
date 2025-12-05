@@ -60,7 +60,7 @@ function App(): JSX.Element {
 					<Header />
 				</>
 			)}
-			
+
 			{/* Contenido principal con margen para el sidebar y header */}
 			<div
 				className={`min-h-screen transition-all duration-300 ease-in-out ${
@@ -92,16 +92,14 @@ function App(): JSX.Element {
 						/>
 
 						{/* Rutas protegidas - Dashboard (sin permisos específicos, solo requiere login) */}
-						<Route
-							element={<RutaProtegida />}
-						>
+						<Route element={<RutaProtegida />}>
 							<Route
 								path={ROUTES.DASHBOARD}
 								element={<Dashboard />}
 							/>
 						</Route>
 
-						{/* Rutas protegidas - Gastos */}
+						{/* Rutas protegidas - Gestión de Gastos */}
 						<Route
 							element={
 								<RutaProtegida
@@ -134,51 +132,156 @@ function App(): JSX.Element {
 						</Route>
 
 						{/* Rutas protegidas - Catálogos */}
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_CENTRO_COSTOS]} />}>
-							<Route path={ROUTES.CATALOGOS_CENTROS_COSTOS} element={<CentroCostos />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_CENTRO_COSTOS]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.CATALOGOS_CENTROS_COSTOS}
+								element={<CentroCostos />}
+							/>
 						</Route>
 						{/* Ruta alternativa para compatibilidad con menú antiguo */}
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_CENTRO_COSTOS]} />}>
-							<Route path="/centro-costos" element={<CentroCostos />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_CENTRO_COSTOS]}
+								/>
+							}
+						>
+							<Route
+								path="/centro-costos"
+								element={<CentroCostos />}
+							/>
 						</Route>
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_CUENTA_CONTABLE]} />}>
-							<Route path={ROUTES.CATALOGOS_CUENTAS_CONTABLES} element={<CuentaContable />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_CUENTA_CONTABLE]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.CATALOGOS_CUENTAS_CONTABLES}
+								element={<CuentaContable />}
+							/>
 						</Route>
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_PLAZAS]} />}>
-							<Route path={ROUTES.CATALOGOS_PLAZAS} element={<Plazas />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_PLAZAS]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.CATALOGOS_PLAZAS}
+								element={<Plazas />}
+							/>
 						</Route>
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_DIVISION]} />}>
-							<Route path={ROUTES.CATALOGOS_DIVISION} element={<Division />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_DIVISION]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.CATALOGOS_DIVISION}
+								element={<Division />}
+							/>
 						</Route>
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_CLAVES_PRODUCTO]} />}>
-							<Route path={ROUTES.CATALOGOS_CLAVES_PRODUCTO} element={<ClaveProducto />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_CLAVES_PRODUCTO]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.CATALOGOS_CLAVES_PRODUCTO}
+								element={<ClaveProducto />}
+							/>
 						</Route>
 
 						{/* Rutas protegidas - Pólizas */}
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_POLIZAS]} />}>
-							<Route path={ROUTES.POLIZAS} element={<Polizas />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_POLIZAS]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.POLIZAS}
+								element={<Polizas />}
+							/>
 						</Route>
 
 						{/* Rutas protegidas - Parámetros de Gastos */}
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_PARAMETROS_GASTOS]} />}>
-							<Route path={ROUTES.CONFIG_PARAMETROS} element={<ConfigParametros />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_PARAMETROS_GASTOS]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.CONFIG_PARAMETROS}
+								element={<ConfigParametros />}
+							/>
 						</Route>
 
 						{/* Rutas protegidas - Timbrado de Gastos */}
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_TIMBRADO]} />}>
-							<Route path={ROUTES.TIMBRADO_DE_GASTOS} element={<Timbrado />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_TIMBRADO]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.TIMBRADO_DE_GASTOS}
+								element={<Timbrado />}
+							/>
 						</Route>
 
 						{/* Rutas protegidas - Analytics */}
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_ANALYTICS]} />}>
-							<Route path={ROUTES.ANALYTICS} element={<Analytics />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_ANALYTICS]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.ANALYTICS}
+								element={<Analytics />}
+							/>
 						</Route>
 
 						{/* Rutas protegidas - Datos del Empleado */}
-						<Route element={<RutaProtegida allowedPermissions={[PERMISSIONS.SECCION_DATOS_EMPLEADO]} />}>
-							<Route path={ROUTES.DATOS_EMPLEADO} element={<DatosEmpleado />} />
-							<Route path={ROUTES.CONFIGURAR_PLAZAS} element={<ConfigurarPlazas />} />
-							<Route path={ROUTES.CONFIGURAR_ARBOL} element={<ConfigurarArbol />} />
+						<Route
+							element={
+								<RutaProtegida
+									allowedPermissions={[PERMISSIONS.SECCION_DATOS_EMPLEADO]}
+								/>
+							}
+						>
+							<Route
+								path={ROUTES.DATOS_EMPLEADO}
+								element={<DatosEmpleado />}
+							/>
+							<Route
+								path={ROUTES.CONFIGURAR_PLAZAS}
+								element={<ConfigurarPlazas />}
+							/>
+							<Route
+								path={ROUTES.CONFIGURAR_ARBOL}
+								element={<ConfigurarArbol />}
+							/>
 						</Route>
 
 						{/* Ruta 404 */}
