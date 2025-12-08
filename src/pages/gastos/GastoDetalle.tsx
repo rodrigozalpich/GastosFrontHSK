@@ -19,10 +19,10 @@ import { formatearMoneda } from "../../helpers/formatHelpers";
 import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
 import TableActionButton from "../../components/TableActionButton";
 import { ICONOS_ACCIONES } from "../../config/iconosAcciones";
-import { ROUTES } from "../../config/routes.config";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import ActionButton from "../../components/ActionButton";
 import TablaDetalleFactura from "../../components/modals/TablaDetalleFactura";
+import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
 
 // Mapa de estatus - constante fuera del componente para evitar recreación
 const ESTATUS_MAP: Record<number, string> = {
@@ -241,7 +241,10 @@ export default function GastoDetalle(): JSX.Element {
 	);
 
 	// Datos memoizados para la tabla
-	const datosTabla = useMemo(() => archivosComprobacion || [], [archivosComprobacion]);
+	const datosTabla = useMemo(
+		() => archivosComprobacion || [],
+		[archivosComprobacion]
+	);
 
 	// Configurar la tabla
 	const table = useMaterialReactTable({
@@ -303,13 +306,14 @@ export default function GastoDetalle(): JSX.Element {
 				: "Error al cargar el gasto";
 		mostrarNotificacion(errorMessage, "error");
 		return (
-			<div className="p-6">
+			<div className="p-3 sm:p-4 lg:p-6">
+				<BotonesNavegacionGastos />
 				<div className="bg-red-50 border border-red-200 rounded-lg p-4">
 					<p className="text-red-800">
 						Error al cargar el gasto. Por favor, intente nuevamente.
 					</p>
 					<button
-						onClick={() => navigate(ROUTES.GASTOS_MIS_GASTOS)}
+						onClick={() => navigate(-1)}
 						className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
 					>
 						Regresar
@@ -320,178 +324,188 @@ export default function GastoDetalle(): JSX.Element {
 	}
 
 	return (
-		<div className="fixed inset-0 bg-black bg-opacity-50 z-10 flex items-center justify-center overflow-auto p-4">
-			<div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-[1400px] h-[90vh] overflow-auto relative">
-				{/* Botón cerrar */}
-				<button
-					type="button"
-					onClick={() => navigate(ROUTES.GASTOS_MIS_GASTOS)}
-					className="absolute top-0 right-0 px-8 py-3 text-2xl text-gray-600 hover:text-gray-800"
-				>
-					<span className="text-5xl">&times;</span>
-				</button>
+		<div className="p-3 sm:p-4 lg:p-6">
+			{/* Botones de navegación siempre visibles */}
+			<BotonesNavegacionGastos />
 
-				{/* Título */}
-				<div className="mb-6">
-					<h2 className="text-2xl font-bold text-gray-800">Ver gasto</h2>
-				</div>
+			{/* Título */}
+			<div className="mb-4 sm:mb-6">
+				<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+					Gasto: {gasto.nombre}
+				</h1>
+			</div>
 
-				{/* Tarjetas de información */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+			{/* Tarjetas de información */}
+			<div className="mb-6">
+				{/* Primera fila: 5 tarjetas */}
+				<div className="grid grid-cols-1 md:grid-cols-5">
 					{/* Tarjeta: Nombre del gasto */}
-					<div className="bg-[#082F49] text-white p-4 rounded-lg">
-						<p className="text-sm font-semibold mb-2">Nombre del gasto</p>
-						<p className="text-lg">{gasto.nombre}</p>
+					<div className="bg-[#082F49] text-white p-4 md:rounded-tl-xl border border-[#B9B9B9C2]">
+						<p className="text-center text-base font-bold mb-2">Nombre del gasto</p>
+						<p className="text-center text-base">{gasto.nombre}</p>
 					</div>
 
 					{/* Tarjeta: Motivo del gasto */}
-					<div className="bg-[#082F49] text-white p-4 rounded-lg">
-						<p className="text-sm font-semibold mb-2">Motivo del gasto</p>
-						<p className="text-lg">{gasto.descripcion || "-"}</p>
+					<div className="bg-[#082F49] text-white p-4 rounded-lg md:rounded-none border border-[#B9B9B9C2]">
+						<p className="text-center text-base font-bold mb-2">Motivo del gasto</p>
+						<p className="text-center text-base">{gasto.descripcion || "-"}</p>
 					</div>
 
 					{/* Tarjeta: Presupuesto */}
-					<div className="bg-[#082F49] text-white p-4 rounded-lg">
-						<p className="text-sm font-semibold mb-2">Presupuesto: MXN</p>
-						<p className="text-lg">{formatearMoneda(gasto.presupuesto)}</p>
+					<div className="bg-[#082F49] text-white p-4 rounded-lg md:rounded-none border border-[#B9B9B9C2]">
+						<p className="text-center text-base font-bold mb-2">Presupuesto: MXN</p>
+						<p className="text-center text-base">{formatearMoneda(gasto.presupuesto)}</p>
 					</div>
 
 					{/* Tarjeta: Fecha de inicio */}
-					<div className="bg-[#082F49] text-white p-4 rounded-lg">
-						<p className="text-sm font-semibold mb-2">Fecha de inicio</p>
-						<p className="text-lg">
+					<div className="bg-[#082F49] text-white p-4 rounded-lg md:rounded-none border border-[#B9B9B9C2]">
+						<p className="text-center text-base font-bold mb-2">Fecha de inicio</p>
+						<p className="text-center text-base">
 							{formatearFechaLocalizada(gasto.fechaInicio)}
 						</p>
 					</div>
 
+					{/* Tarjeta: Estado de la autorización */}
+					{gasto.nivelMaximo && gasto.estatus !== 1 && gasto.estatus !== 5 ? (
+						<div className="bg-[#082F49] text-white p-4 rounded-lg md:rounded-tr-xl border border-[#B9B9B9C2]">
+							<p className="text-center text-base font-bold mb-2">
+								Estado de la autorización
+							</p>
+							<p className="text-center text-base">Ciclo de autorización completado</p>
+						</div>
+					) : (
+						<div className="bg-[#082F49] text-white p-4 md:rounded-tr-xl border border-[#B9B9B9C2]">
+							<p className="text-center text-base font-bold mb-2">
+								Estado de la autorización
+							</p>
+							<p className="text-center text-base">-</p>
+						</div>
+					)}
+				</div>
+
+				{/* Segunda fila: 4 tarjetas */}
+				<div className="grid grid-cols-1 md:grid-cols-4">
 					{/* Tarjeta: Fecha de término */}
-					<div className="bg-[#082F49] text-white p-4 rounded-lg">
-						<p className="text-sm font-semibold mb-2">Fecha de término</p>
-						<p className="text-lg">
-							{gasto.fechaFin
-								? formatearFechaLocalizada(gasto.fechaFin)
-								: "-"}
+					<div className="bg-[#082F49] text-white p-4 border border-[#B9B9B9C2]">
+						<p className="text-center text-base font-bold mb-2">Fecha de término</p>
+						<p className="text-center text-base">
+							{gasto.fechaFin ? formatearFechaLocalizada(gasto.fechaFin) : "-"}
 						</p>
 					</div>
 
-					{/* Tarjeta: Estado de la autorización */}
-					{gasto.nivelMaximo && gasto.estatus !== 1 && gasto.estatus !== 5 && (
-						<div className="bg-[#082F49] text-white p-4 rounded-lg">
-							<p className="text-sm font-semibold mb-2">
-								Estado de la autorización
-							</p>
-							<p className="text-lg">Ciclo de autorización completado</p>
+					{/* Tarjeta: Autorizado por */}
+					{gasto.autorizador &&
+					gasto.estatus !== 1 &&
+					gasto.siguienteAutorizador &&
+					gasto.estatus !== 5 ? (
+						<div className="bg-[#082F49] text-white p-4 border border-[#B9B9B9C2]">
+							<p className="text-center text-base font-bold mb-2">Autorizado por:</p>
+							<p className="text-center text-base">{gasto.autorizador}</p>
+						</div>
+					) : (
+						<div className="bg-[#082F49] text-white p-4 border border-[#B9B9B9C2]">
+							<p className="text-center text-base font-bold mb-2">Autorizado por:</p>
+							<p className="text-center text-base">-</p>
 						</div>
 					)}
 
-					{/* Tarjeta: Autorizado por */}
-					{gasto.autorizador &&
-						gasto.estatus !== 1 &&
-						gasto.siguienteAutorizador &&
-						gasto.estatus !== 5 && (
-							<div className="bg-[#082F49] text-white p-4 rounded-lg">
-								<p className="text-sm font-semibold mb-2">Autorizado por:</p>
-								<p className="text-lg">{gasto.autorizador}</p>
-							</div>
-						)}
-
 					{/* Tarjeta: Tipo */}
-					<div className="bg-[#082F49] text-white p-4 rounded-lg">
-						<p className="text-sm font-semibold mb-2">Tipo</p>
-						<p className="text-lg">{obtenerTextoTipo(gasto.esAnticipo)}</p>
+					<div className="bg-[#082F49] text-white p-4 border border-[#B9B9B9C2]">
+						<p className="text-center text-base font-bold mb-2">Tipo</p>
+						<p className="text-center text-base">{obtenerTextoTipo(gasto.esAnticipo)}</p>
 					</div>
 
 					{/* Tarjeta: Estatus */}
-					<div className="bg-[#082F49] text-white p-4 rounded-lg">
-						<p className="text-sm font-semibold mb-2">Estatus</p>
-						<p className="text-lg">{obtenerTextoEstatus(gasto.estatus)}</p>
+					<div className="bg-[#082F49] text-white p-4 border border-[#B9B9B9C2]">
+						<p className="text-center text-base font-bold mb-2">Estatus</p>
+						<p className="text-center text-base">{obtenerTextoEstatus(gasto.estatus)}</p>
 					</div>
 				</div>
-
-				{/* Tabla de estado de comprobación */}
-				<div className="mb-6">
-					<div className="bg-[#bae6fd] p-4 rounded-t-lg">
-						<h3 className="text-lg font-semibold text-[#082F49]">
-							Estado de comprobación
-						</h3>
-					</div>
-					<div className="grid grid-cols-4 gap-4 bg-[#082F49] text-white p-4 rounded-b-lg">
-						<div>
-							<p className="text-sm font-semibold mb-1">Comprobado</p>
-							<p className="text-lg">{formatearMoneda(totales.comprobado)}</p>
-						</div>
-						<div>
-							<p className="text-sm font-semibold mb-1">Aceptado</p>
-							<p className="text-lg">{formatearMoneda(totales.aceptado)}</p>
-						</div>
-						<div>
-							<p className="text-sm font-semibold mb-1">Abonado</p>
-							<p className="text-lg">{formatearMoneda(totales.abonado)}</p>
-						</div>
-						<div>
-							<p className="text-sm font-semibold mb-1">Presupuesto</p>
-							<p className="text-lg">{formatearMoneda(totales.presupuesto)}</p>
-						</div>
-					</div>
-				</div>
-
-				{/* Botones de acción */}
-				<div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-					<ActionButton
-						icon={faDollarSign}
-						text="Descargar PDF detalles"
-						variant="primary"
-						onClick={() => {
-							// TODO: Implementar descarga de PDF
-							mostrarNotificacion("Funcionalidad en desarrollo", "info");
-						}}
-						className="bg-[#0284C7] hover:bg-[#075985] text-white"
-					/>
-					<ActionButton
-						icon={faDollarSign}
-						text="Descargar lote archivos"
-						variant="primary"
-						onClick={() => {
-							// TODO: Implementar descarga de lote
-							mostrarNotificacion("Funcionalidad en desarrollo", "info");
-						}}
-						className="bg-[#0284C7] hover:bg-[#075985] text-white"
-					/>
-					<ActionButton
-						icon={faDollarSign}
-						text="Cargar facturas"
-						variant="primary"
-						onClick={() => {
-							// TODO: Implementar carga de facturas
-							mostrarNotificacion("Funcionalidad en desarrollo", "info");
-						}}
-						className="bg-[#0284C7] hover:bg-[#075985] text-white"
-					/>
-					<ActionButton
-						icon={faDollarSign}
-						text="Comprobante sin factura"
-						variant="primary"
-						onClick={() => {
-							// TODO: Implementar comprobante sin factura
-							mostrarNotificacion("Funcionalidad en desarrollo", "info");
-						}}
-						className="bg-[#0284C7] hover:bg-[#075985] text-white"
-					/>
-				</div>
-
-				{/* Tabla de archivos de comprobación */}
-				<div className="bg-white rounded-lg shadow overflow-x-auto">
-					<MaterialReactTable table={table} />
-				</div>
-
-				{/* Modal de detalle de factura - renderizado condicional optimizado */}
-				{modalFacturaAbierto && archivoSeleccionado && (
-					<TablaDetalleFactura
-						archivo={archivoSeleccionado}
-						onClose={handleCerrarModal}
-					/>
-				)}
 			</div>
+
+			{/* Tabla de estado de comprobación */}
+			<div className="mb-6">
+				<div className="bg-[#bae6fd] p-4 rounded-t-lg">
+					<h3 className="text-center text-base font-bold text-black">
+						Estado de comprobación
+					</h3>
+				</div>
+				<div className="grid grid-cols-4 gap-4 bg-[#082F49] text-white p-4 rounded-b-lg">
+					<div>
+						<p className="text-center text-base font-bold mb-1">Comprobado</p>
+						<p className="text-center text-base">{formatearMoneda(totales.comprobado)}</p>
+					</div>
+					<div>
+						<p className="text-center text-base font-bold mb-1">Aceptado</p>
+						<p className="text-center text-base">{formatearMoneda(totales.aceptado)}</p>
+					</div>
+					<div>
+						<p className="text-center text-base font-bold mb-1">Abonado</p>
+						<p className="text-center text-base">{formatearMoneda(totales.abonado)}</p>
+					</div>
+					<div>
+						<p className="text-center text-base font-bold mb-1">Presupuesto</p>
+						<p className="text-center text-base">{formatearMoneda(totales.presupuesto)}</p>
+					</div>
+				</div>
+			</div>
+
+			{/* Botones de acción */}
+			<div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+				<ActionButton
+					icon={faDollarSign}
+					text="Descargar PDF detalles"
+					variant="primary"
+					onClick={() => {
+						// TODO: Implementar descarga de PDF
+						mostrarNotificacion("Funcionalidad en desarrollo", "info");
+					}}
+					className="bg-[#0284C7] hover:bg-[#075985] text-white"
+				/>
+				<ActionButton
+					icon={faDollarSign}
+					text="Descargar lote archivos"
+					variant="primary"
+					onClick={() => {
+						// TODO: Implementar descarga de lote
+						mostrarNotificacion("Funcionalidad en desarrollo", "info");
+					}}
+					className="bg-[#0284C7] hover:bg-[#075985] text-white"
+				/>
+				<ActionButton
+					icon={faDollarSign}
+					text="Cargar facturas"
+					variant="primary"
+					onClick={() => {
+						// TODO: Implementar carga de facturas
+						mostrarNotificacion("Funcionalidad en desarrollo", "info");
+					}}
+					className="bg-[#0284C7] hover:bg-[#075985] text-white"
+				/>
+				<ActionButton
+					icon={faDollarSign}
+					text="Comprobante sin factura"
+					variant="primary"
+					onClick={() => {
+						// TODO: Implementar comprobante sin factura
+						mostrarNotificacion("Funcionalidad en desarrollo", "info");
+					}}
+					className="bg-[#0284C7] hover:bg-[#075985] text-white"
+				/>
+			</div>
+
+			{/* Tabla de archivos de comprobación */}
+			<div className="bg-white rounded-lg shadow overflow-x-auto">
+				<MaterialReactTable table={table} />
+			</div>
+
+			{/* Modal de detalle de factura - renderizado condicional optimizado */}
+			{modalFacturaAbierto && archivoSeleccionado && (
+				<TablaDetalleFactura
+					archivo={archivoSeleccionado}
+					onClose={handleCerrarModal}
+				/>
+			)}
 		</div>
 	);
 }

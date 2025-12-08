@@ -4,12 +4,16 @@ import {
 	useMaterialReactTable,
 	type MRT_ColumnDef,
 } from "material-react-table";
+import { useNavigate } from "react-router";
 import { useGastos } from "../../hooks/useGastos";
 import Loader from "../../components/Loader";
 import FiltrosComplejosGastos from "../../components/FiltrosComplejosGastos";
 import type { GastoDTO } from "../../types/gastos";
 import { MRT_Localization_ES } from "../../config/mrtLocalization";
-import { useGastoStore, aplicarFiltrosComplejosAGastos } from "../../store/gastoStore";
+import {
+	useGastoStore,
+	aplicarFiltrosComplejosAGastos,
+} from "../../store/gastoStore";
 import { useTituloStore } from "../../services/tituloService";
 import ModalGasto from "../../components/ModalGasto";
 import ModalConfirmacion from "../../components/ModalConfirmacion";
@@ -20,6 +24,7 @@ import { formatearMoneda } from "../../helpers/formatHelpers";
 import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
 import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
 import { ICONOS_ACCIONES } from "../../config/iconosAcciones";
+import { ROUTES } from "../../config/routes.config";
 
 /**
  * Componente de listado de gastos usando Material React Table
@@ -28,12 +33,18 @@ import { ICONOS_ACCIONES } from "../../config/iconosAcciones";
  * @returns {JSX.Element} El componente de listado de gastos
  */
 export default function ListadoGastos(): JSX.Element {
+	const navigate = useNavigate();
 	const { gastos, isLoading, isError } = useGastos();
 	const { filtrosComplejos } = useGastoStore();
 	const { actualizarTitulo } = useTituloStore();
-	const [gastoSeleccionado, setGastoSeleccionado] = useState<GastoDTO | null>(null);
-	const [modoModal, setModoModal] = useState<"crear" | "editar" | "ver" | null>(null);
-	const [mostrarConfirmacionEliminar, setMostrarConfirmacionEliminar] = useState(false);
+	const [gastoSeleccionado, setGastoSeleccionado] = useState<GastoDTO | null>(
+		null
+	);
+	const [modoModal, setModoModal] = useState<"crear" | "editar" | "ver" | null>(
+		null
+	);
+	const [mostrarConfirmacionEliminar, setMostrarConfirmacionEliminar] =
+		useState(false);
 	const [gastoAEliminar, setGastoAEliminar] = useState<GastoDTO | null>(null);
 	const { eliminarGasto } = useGastos();
 
@@ -41,7 +52,7 @@ export default function ListadoGastos(): JSX.Element {
 	useEffect(() => {
 		actualizarTitulo("Gestión de Gastos");
 	}, [actualizarTitulo]);
-	
+
 	// Aplicar filtros complejos antes de pasarlos a MRT
 	// Memoizar para evitar recálculos innecesarios que causan loops infinitos
 	const gastosFiltrados = useMemo(() => {
@@ -84,21 +95,33 @@ export default function ListadoGastos(): JSX.Element {
 				size: 150,
 				Cell: ({ cell }) => {
 					const estatus = cell.getValue<number>();
-				const estatusMap: Record<number, { label: string; className: string }> = {
-					1: { label: "Abierto", className: "bg-green-100 text-green-800" },
-					2: { label: "Finalizado", className: "bg-gray-100 text-gray-800" },
-					3: { label: "Autorizado", className: "bg-blue-100 text-blue-800" },
-					4: { label: "No Autorizado", className: "bg-red-100 text-red-800" },
-					5: { label: "Pendiente de Pago", className: "bg-yellow-100 text-yellow-800" },
-					6: { label: "Pagado", className: "bg-green-100 text-green-800" },
-					7: { label: "En proceso de Autorización", className: "bg-purple-100 text-purple-800" },
-					8: { label: "En devolución", className: "bg-orange-100 text-orange-800" },
-					9: { label: "Cancelado", className: "bg-red-100 text-red-800" },
-				};
-				const estado = estatusMap[estatus] || {
-					label: "Desconocido",
-					className: "bg-gray-100 text-gray-800",
-				};
+					const estatusMap: Record<
+						number,
+						{ label: string; className: string }
+					> = {
+						1: { label: "Abierto", className: "bg-green-100 text-green-800" },
+						2: { label: "Finalizado", className: "bg-gray-100 text-gray-800" },
+						3: { label: "Autorizado", className: "bg-blue-100 text-blue-800" },
+						4: { label: "No Autorizado", className: "bg-red-100 text-red-800" },
+						5: {
+							label: "Pendiente de Pago",
+							className: "bg-yellow-100 text-yellow-800",
+						},
+						6: { label: "Pagado", className: "bg-green-100 text-green-800" },
+						7: {
+							label: "En proceso de Autorización",
+							className: "bg-purple-100 text-purple-800",
+						},
+						8: {
+							label: "En devolución",
+							className: "bg-orange-100 text-orange-800",
+						},
+						9: { label: "Cancelado", className: "bg-red-100 text-red-800" },
+					};
+					const estado = estatusMap[estatus] || {
+						label: "Desconocido",
+						className: "bg-gray-100 text-gray-800",
+					};
 					return (
 						<span
 							className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${estado.className}`}
@@ -180,8 +203,12 @@ export default function ListadoGastos(): JSX.Element {
 				<TableActionButton
 					iconSrc={ICONOS_ACCIONES.ver}
 					onClick={() => {
-						setGastoSeleccionado(row.original);
-						setModoModal("ver");
+						navigate(
+							ROUTES.GASTOS_DETALLE.replace(
+								":gastoId",
+								row.original.id.toString()
+							)
+						);
 					}}
 					tooltip="Ver"
 					variant="ver"
@@ -228,12 +255,17 @@ export default function ListadoGastos(): JSX.Element {
 		<div className="p-3 sm:p-4 lg:p-6">
 			{/* Botones de navegación siempre visibles */}
 			<BotonesNavegacionGastos />
-			
+
 			<div className="mb-4 sm:mb-6 flex justify-between items-center">
 				<div>
-					<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Gestión de Gastos</h1>
+					<h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+						Gestión de Gastos
+					</h1>
 					<p className="text-sm sm:text-base text-gray-600">
-						Total de gastos: {gastosFiltrados.length} {gastos && gastos.length !== gastosFiltrados.length && `(de ${gastos.length} total)`}
+						Total de gastos: {gastosFiltrados.length}{" "}
+						{gastos &&
+							gastos.length !== gastosFiltrados.length &&
+							`(de ${gastos.length} total)`}
 					</p>
 				</div>
 				<ActionButton
@@ -271,7 +303,9 @@ export default function ListadoGastos(): JSX.Element {
 			<ModalConfirmacion
 				abierto={mostrarConfirmacionEliminar}
 				titulo="Eliminar Gasto"
-				mensaje={`¿Está seguro de que desea eliminar el gasto "${gastoAEliminar?.nombre || ""}"? Esta acción no se puede deshacer.`}
+				mensaje={`¿Está seguro de que desea eliminar el gasto "${
+					gastoAEliminar?.nombre || ""
+				}"? Esta acción no se puede deshacer.`}
 				textoConfirmar="Eliminar"
 				textoCancelar="Cancelar"
 				colorConfirmar="red"
