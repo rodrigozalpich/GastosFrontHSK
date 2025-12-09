@@ -24,8 +24,8 @@ export interface RespuestaJustificanteDTO {
  * DTO de respuesta múltiple
  */
 export interface RespuestaMultipleDTO {
-	estatus: boolean;
-	descripcion: string;
-	lista?: unknown[];
+	estatus: boolean[];
+	descripcion: string[];
+	nombre: string[];
 }
 

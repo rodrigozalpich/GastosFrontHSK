@@ -7,6 +7,7 @@ import {
 import { useNavigate } from "react-router";
 import { useGastos } from "../../hooks/useGastos";
 import Loader from "../../components/Loader";
+import { useNotificacionStore } from "../../store/notificacionStore";
 import FiltrosComplejosGastos from "../../components/FiltrosComplejosGastos";
 import type { GastoDTO } from "../../types/gastos";
 import { MRT_Localization_ES } from "../../config/mrtLocalization";
@@ -25,6 +26,14 @@ import { formatearFechaLocalizada } from "../../helpers/dateHelpers";
 import BotonesNavegacionGastos from "../../components/BotonesNavegacionGastos";
 import { ICONOS_ACCIONES } from "../../config/iconosAcciones";
 import { ROUTES } from "../../config/routes.config";
+import {
+	esVerPolizaDiario,
+	esCrearPolizaDiario,
+	esVerPolizaIngreso,
+	esCrearPolizaIngreso,
+	esVerPolizaEgreso,
+	esCrearPolizaEgreso,
+} from "../../helpers/permisosHelpers";
 
 /**
  * Componente de listado de gastos usando Material React Table
@@ -37,6 +46,9 @@ export default function ListadoGastos(): JSX.Element {
 	const { gastos, isLoading, isError } = useGastos();
 	const { filtrosComplejos } = useGastoStore();
 	const { actualizarTitulo } = useTituloStore();
+	const mostrarNotificacion = useNotificacionStore(
+		(state) => state.mostrarNotificacion
+	);
 	const [gastoSeleccionado, setGastoSeleccionado] = useState<GastoDTO | null>(
 		null
 	);
@@ -198,41 +210,139 @@ export default function ListadoGastos(): JSX.Element {
 				},
 			};
 		},
-		renderRowActions: ({ row }) => (
-			<div className="flex gap-2">
-				<TableActionButton
-					iconSrc={ICONOS_ACCIONES.ver}
-					onClick={() => {
-						navigate(
-							ROUTES.GASTOS_DETALLE.replace(
-								":gastoId",
-								row.original.id.toString()
-							)
-						);
-					}}
-					tooltip="Ver"
-					variant="ver"
-				/>
-				<TableActionButton
-					iconSrc={ICONOS_ACCIONES.editar}
-					onClick={() => {
-						setGastoSeleccionado(row.original);
-						setModoModal("editar");
-					}}
-					tooltip="Editar"
-					variant="edit"
-				/>
-				<TableActionButton
-					iconSrc={ICONOS_ACCIONES.eliminar}
-					onClick={() => {
-						setGastoAEliminar(row.original);
-						setMostrarConfirmacionEliminar(true);
-					}}
-					tooltip="Eliminar"
-					variant="delete"
-				/>
-			</div>
-		),
+		renderRowActions: ({ row }) => {
+			const gasto = row.original;
+
+			return (
+				<div className="flex gap-2">
+					{/* Botón Ver - siempre visible */}
+					<TableActionButton
+						iconSrc={ICONOS_ACCIONES.ver}
+						onClick={() => {
+							navigate(
+								ROUTES.GASTOS_DETALLE.replace(
+									":gastoId",
+									gasto.id.toString()
+								)
+							);
+						}}
+						tooltip="Ver gasto"
+						variant="ver"
+					/>
+
+					{/* Botón Ver póliza de diario */}
+					{esVerPolizaDiario() &&
+						gasto.esCerrado &&
+						gasto.tienePolizaDiario && (
+							<TableActionButton
+								iconSrc="/assets/iconos/polizas.svg"
+								onClick={() => {
+									// TODO: Implementar openDialogModificarPolizaDiario
+									mostrarNotificacion(
+										"Funcionalidad de ver póliza de diario en desarrollo",
+										"info"
+									);
+								}}
+								tooltip="Ver póliza de diario"
+								variant="ver"
+							/>
+						)}
+
+					{/* Botón Crear póliza de diario */}
+					{esCrearPolizaDiario() &&
+						gasto.esCerrado &&
+						gasto.esPagado &&
+						!gasto.tienePolizaDiario && (
+							<TableActionButton
+								iconSrc="/assets/iconos/polizas.svg"
+								onClick={() => {
+									// TODO: Implementar openDialogModificarPolizaDiario
+									mostrarNotificacion(
+										"Funcionalidad de crear póliza de diario en desarrollo",
+										"info"
+									);
+								}}
+								tooltip="Crear póliza de diario"
+								variant="edit"
+							/>
+						)}
+
+					{/* Botón Ver póliza de ingreso */}
+					{esVerPolizaIngreso() &&
+						gasto.esDevolucion &&
+						gasto.devolucionPagada &&
+						gasto.tienePolizaIngreso && (
+							<TableActionButton
+								iconSrc="/assets/iconos/polizas.svg"
+								onClick={() => {
+									// TODO: Implementar openDialogModificarPolizaIngreso
+									mostrarNotificacion(
+										"Funcionalidad de ver póliza de ingreso en desarrollo",
+										"info"
+									);
+								}}
+								tooltip="Ver póliza de ingreso"
+								variant="ver"
+							/>
+						)}
+
+					{/* Botón Crear póliza de ingreso */}
+					{esCrearPolizaIngreso() &&
+						gasto.esDevolucion &&
+						gasto.devolucionPagada &&
+						!gasto.tienePolizaIngreso && (
+							<TableActionButton
+								iconSrc="/assets/iconos/polizas.svg"
+								onClick={() => {
+									// TODO: Implementar openDialogModificarPolizaIngreso
+									mostrarNotificacion(
+										"Funcionalidad de crear póliza de ingreso en desarrollo",
+										"info"
+									);
+								}}
+								tooltip="Crear póliza de ingreso"
+								variant="edit"
+							/>
+						)}
+
+					{/* Botón Ver póliza de egreso */}
+					{esVerPolizaEgreso() &&
+						gasto.esPagado &&
+						gasto.tienePolizaEgreso && (
+							<TableActionButton
+								iconSrc="/assets/iconos/polizas.svg"
+								onClick={() => {
+									// TODO: Implementar openDialogModificarPolizaEgreso
+									mostrarNotificacion(
+										"Funcionalidad de ver póliza de egreso en desarrollo",
+										"info"
+									);
+								}}
+								tooltip="Ver póliza de egreso"
+								variant="ver"
+							/>
+						)}
+
+					{/* Botón Crear póliza de egreso */}
+					{esCrearPolizaEgreso() &&
+						gasto.esPagado &&
+						!gasto.tienePolizaEgreso && (
+							<TableActionButton
+								iconSrc="/assets/iconos/polizas.svg"
+								onClick={() => {
+									// TODO: Implementar openDialogModificarPolizaEgreso
+									mostrarNotificacion(
+										"Funcionalidad de crear póliza de egreso en desarrollo",
+										"info"
+									);
+								}}
+								tooltip="Crear póliza de egreso"
+								variant="edit"
+							/>
+						)}
+				</div>
+			);
+		},
 	});
 
 	if (isLoading) {

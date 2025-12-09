@@ -7,21 +7,27 @@ import type {
 	GastoAutorizadoDTO,
 	GastoRechazadoDTO,
 	MovimientosCuentaContableDTO,
+	MovimientosGastosDTO,
 	AutorizadorDTO,
+	CuentaContableGastosDTO,
 } from "../types/gastos";
 // Tipos que se usarán en fases posteriores:
 // MovimientosGastosDTO, PolizaGastosDTO, PolizaDetalleGastosDTO,
 // ArchivoFechaDTO, NoDeducibleDTO, DevolucionesDTO,
 // ParametrosEmpresaGastosDTO, GastoCompartidoDTO
-import type { RespuestaDTO, RespuestaJustificanteDTO, RespuestaMultipleDTO } from "../types/utilidades";
+import type {
+	RespuestaDTO,
+	RespuestaJustificanteDTO,
+	RespuestaMultipleDTO,
+} from "../types/utilidades";
 import type { UsuarioGastoDTO } from "../types/seguridad";
 
 /**
  * Servicio de gestión de gastos
- * 
+ *
  * Servicio principal para todas las operaciones relacionadas con gastos.
  * Migrado de GastoService de Angular, adaptado para usar Axios y Promises.
- * 
+ *
  * @class GastoService
  * @example
  * ```typescript
@@ -33,9 +39,13 @@ class GastoService {
 	// URLs que se usarán en fases posteriores:
 	// private readonly apiUrlExcel = `${import.meta.env.VITE_API_BACK_BASE_URL}GenerarExcel`;
 	// private readonly apiUrlNotifi = `${import.meta.env.VITE_API_BACK_BASE_URL}Notificador`;
-	private readonly apiUrlUsuario = `${import.meta.env.VITE_API_SSO_BASE_URL}usuarioGastos`;
+	private readonly apiUrlUsuario = `${
+		import.meta.env.VITE_API_SSO_BASE_URL
+	}usuarioGastos`;
 	// private readonly apiUrlPE = `${import.meta.env.VITE_API_BACK_BASE_URL}EmpleadoGastos`;
-	private readonly apiUrlArchivo = `${import.meta.env.VITE_API_BACK_BASE_URL}archivoComprobacion`;
+	private readonly apiUrlArchivo = `${
+		import.meta.env.VITE_API_BACK_BASE_URL
+	}archivoComprobacion`;
 	// private readonly apiPolizaGastos = `${import.meta.env.VITE_API_BACK_BASE_URL}PolizasGastos`;
 	// private readonly apiParametros = `${import.meta.env.VITE_API_BACK_BASE_URL}ParametrosEmpresaGastos`;
 
@@ -43,13 +53,16 @@ class GastoService {
 
 	/**
 	 * Obtiene todos los gastos de un empleado
-	 * 
+	 *
 	 * @param idEmpleado - ID del empleado
 	 * @param idEmpresa - ID de la empresa
 	 * @returns Promise con array de gastos del empleado
 	 * @throws Error si la petición falla
 	 */
-	async obtenerGastos(idEmpleado: number, idEmpresa: number): Promise<GastoDTO[]> {
+	async obtenerGastos(
+		idEmpleado: number,
+		idEmpresa: number
+	): Promise<GastoDTO[]> {
 		const response = await apiBACK.get<GastoDTO[]>(
 			`${this.apiUrl}/${idEmpresa}/ObtenerTodosGastos/${idEmpleado}`
 		);
@@ -72,7 +85,10 @@ class GastoService {
 	/**
 	 * Obtiene gastos por ID de empleado
 	 */
-	async obtenerXIdEmpleado(idEmpleado: number, idEmpresa: number): Promise<GastoDTO[]> {
+	async obtenerXIdEmpleado(
+		idEmpleado: number,
+		idEmpresa: number
+	): Promise<GastoDTO[]> {
 		const response = await apiBACK.get<GastoDTO[]>(
 			`${this.apiUrl}/${idEmpresa}/ObtenerGastosxPlaza/${idEmpleado}`
 		);
@@ -81,13 +97,16 @@ class GastoService {
 
 	/**
 	 * Crea un nuevo gasto
-	 * 
+	 *
 	 * @param registro - Datos del gasto a crear
 	 * @param idEmpresa - ID de la empresa
 	 * @returns Promise con respuesta del servidor
 	 * @throws Error si la petición falla o los datos son inválidos
 	 */
-	async crearGasto(registro: GastoDTO, idEmpresa: number): Promise<RespuestaDTO> {
+	async crearGasto(
+		registro: GastoDTO,
+		idEmpresa: number
+	): Promise<RespuestaDTO> {
 		// Preparar el objeto para el backend según el ejemplo de Swagger
 		// El objeto se envía directamente (sin envolver) como muestra Swagger
 		// Campos boolean no nullable deben ser boolean, no null
@@ -122,7 +141,10 @@ class GastoService {
 	/**
 	 * Edita un gasto existente
 	 */
-	async editarGasto(registro: GastoDTO, idEmpresa: number): Promise<RespuestaDTO> {
+	async editarGasto(
+		registro: GastoDTO,
+		idEmpresa: number
+	): Promise<RespuestaDTO> {
 		const response = await apiBACK.put<RespuestaDTO>(
 			`${this.apiUrl}/${idEmpresa}/EditarGasto`,
 			registro
@@ -219,8 +241,7 @@ class GastoService {
 			formData.append("files", files[i]);
 		}
 		for (let i = 0; i < idplazasEmpleadosCompartir.length; i++) {
-			const jsonData = JSON.stringify(idplazasEmpleadosCompartir[i]);
-			formData.append("listaPlazas", jsonData);
+			formData.append("listaPlazas", idplazasEmpleadosCompartir[i].toString());
 		}
 
 		const response = await apiBACK.post<RespuestaMultipleDTO>(
@@ -245,6 +266,167 @@ class GastoService {
 		const response = await apiBACK.post<RespuestaDTO>(
 			`${this.apiUrlArchivo}/${idEmpresa}/borrarArchivoComprobacion`,
 			registro
+		);
+		return response.data;
+	}
+
+	/**
+	 * Descarga el PDF de detalles de un gasto
+	 */
+	async descargarPDFDetalle(idGasto: number, idEmpresa: number): Promise<Blob> {
+		const response = await apiBACK.get<Blob>(
+			`${this.apiUrl}/${idEmpresa}/DescargaPDFDetalle/${idGasto}`,
+			{
+				responseType: "blob",
+			}
+		);
+		return response.data;
+	}
+
+	/**
+	 * Descarga el justificante de un gasto
+	 */
+	async descargarJustificante(
+		idGasto: number,
+		idEmpresa: number
+	): Promise<{ blob: Blob; filename: string }> {
+		const response = await apiBACK.get<Blob>(
+			`${this.apiUrl}/${idEmpresa}/obtenJustificante/${idGasto}`,
+			{
+				responseType: "blob",
+			}
+		);
+
+		const contentType =
+			response.headers["content-type"] || "application/octet-stream";
+		const contentDisposition = response.headers["content-disposition"];
+
+		// Detectar extensión por Content-Type
+		let extension = "";
+		switch (contentType) {
+			case "application/pdf":
+				extension = ".pdf";
+				break;
+			case "image/jpeg":
+				extension = ".jpg";
+				break;
+			case "image/png":
+				extension = ".png";
+				break;
+			case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+				extension = ".docx";
+				break;
+			case "application/msword":
+				extension = ".doc";
+				break;
+			case "text/plain":
+				extension = ".txt";
+				break;
+			default:
+				extension = "";
+		}
+
+		// Si la API manda Content-Disposition con filename
+		let filename = "";
+		if (contentDisposition && contentDisposition.includes("filename=")) {
+			filename = contentDisposition
+				.split("filename=")[1]
+				.split(";")[0]
+				.replace(/['"]/g, "");
+		} else {
+			// Si no lo manda, usamos un nombre por defecto
+			filename = `Justificante gasto ${idGasto}${extension}`;
+		}
+
+		return { blob: response.data, filename };
+	}
+
+	/**
+	 * Descarga un lote de archivos de comprobación
+	 */
+	async descargarLoteArchivos(
+		idGasto: number,
+		idEmpresa: number
+	): Promise<Blob> {
+		const response = await apiBACK.get<Blob>(
+			`${this.apiUrl}/${idEmpresa}/obtenLoteArchivos/${idGasto}`,
+			{
+				responseType: "blob",
+			}
+		);
+		return response.data;
+	}
+
+	/**
+	 * Descarga un lote de archivos de pago
+	 */
+	async descargarLotePagos(idGasto: number, idEmpresa: number): Promise<Blob> {
+		const response = await apiBACK.get<Blob>(
+			`${this.apiUrl}/${idEmpresa}/obtenLoteArchivosPagos/${idGasto}`,
+			{
+				responseType: "blob",
+			}
+		);
+		return response.data;
+	}
+
+	/**
+	 * Obtiene cuentas contables no deducibles para una plaza empleado
+	 */
+	async obtenerCuentaContableNoDeducible(
+		idPlazaEmpleado: number,
+		idEmpresa: number
+	): Promise<CuentaContableGastosDTO[]> {
+		const response = await apiBACK.get<CuentaContableGastosDTO[]>(
+			`${this.apiUrlArchivo}/${idEmpresa}/obtenerCuentaContableNoDecucibe/${idPlazaEmpleado}`
+		);
+		return response.data;
+	}
+
+	/**
+	 * Registra un comprobante sin factura (no deducible)
+	 */
+	async registrarNoDeducible(
+		datos: {
+			esExtranjero: boolean;
+			concepto: string;
+			total: number;
+			observaciones: string;
+			idCuentaContable: number;
+			idGasto: number;
+			idCentroCosto: number;
+			archivo: File;
+		},
+		idEmpresa: number
+	): Promise<RespuestaDTO> {
+		const formData = new FormData();
+
+		// El backend espera el archivo como "files"
+		formData.append("files", datos.archivo);
+
+		// Crear el objeto noDeducibleDTO según el tipo en gastos.ts
+		const noDeducibleDTO = {
+			nombre: datos.concepto,
+			total: datos.total,
+			observaciones: datos.observaciones,
+			idCuentacontable: datos.idCuentaContable,
+			NombrecuentaContable: "", // No lo tenemos, se puede dejar vacío
+			idCentroCosto: datos.idCentroCosto,
+			idGasto: datos.idGasto,
+			esExtranjero: datos.esExtranjero,
+		};
+
+		// Serializar el DTO como JSON string en el campo "archivo"
+		formData.append("archivo", JSON.stringify(noDeducibleDTO));
+
+		const response = await apiBACK.post<RespuestaDTO>(
+			`${this.apiUrlArchivo}/${idEmpresa}/RegistrarNoDeducibe`,
+			formData,
+			{
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			}
 		);
 		return response.data;
 	}
@@ -392,7 +574,10 @@ class GastoService {
 	/**
 	 * Obtiene gasto autorizado por ID de gasto
 	 */
-	async obtenerGastoAutorizado(idGasto: number, idEmpresa: number): Promise<GastoAutorizadoDTO[]> {
+	async obtenerGastoAutorizado(
+		idGasto: number,
+		idEmpresa: number
+	): Promise<GastoAutorizadoDTO[]> {
 		const response = await apiBACK.get<GastoAutorizadoDTO[]>(
 			`${this.apiUrl}/${idEmpresa}/obtenerGastoAutorizadoxidGasto/${idGasto}`
 		);
@@ -416,7 +601,10 @@ class GastoService {
 	/**
 	 * Rechaza un gasto
 	 */
-	async rechazarGasto(gasto: GastoAutorizadoDTO, idEmpresa: number): Promise<GastoAutorizadoDTO> {
+	async rechazarGasto(
+		gasto: GastoAutorizadoDTO,
+		idEmpresa: number
+	): Promise<GastoAutorizadoDTO> {
 		const response = await apiBACK.post<GastoAutorizadoDTO>(
 			`${this.apiUrl}/${idEmpresa}/CrearGastoAutorizado`,
 			gasto
@@ -491,6 +679,32 @@ class GastoService {
 		return response.data;
 	}
 
+	/**
+	 * Obtiene movimientos por ID de gasto
+	 */
+	async obtenerMovimientosxidGasto(
+		idGasto: number,
+		idEmpresa: number
+	): Promise<MovimientosGastosDTO[]> {
+		const response = await apiBACK.get<MovimientosGastosDTO[]>(
+			`${this.apiUrl}/${idEmpresa}/ObtenMovimientosxidGasto/${idGasto}`
+		);
+		return response.data;
+	}
+
+	/**
+	 * Valida si un gasto tiene todos los asientos contables asignados
+	 */
+	async validarAsientoContable(
+		idGasto: number,
+		idEmpresa: number
+	): Promise<boolean> {
+		const response = await apiBACK.get<boolean>(
+			`${this.apiUrl}/${idEmpresa}/validarAsientoContable/${idGasto}`
+		);
+		return response.data;
+	}
+
 	//#endregion
 
 	//#region Usuarios
@@ -498,7 +712,9 @@ class GastoService {
 	/**
 	 * Obtiene usuario de gastos por ID de usuario
 	 */
-	async obtenerUsuarioGastosxidUsuario(idUsuario: number): Promise<UsuarioGastoDTO> {
+	async obtenerUsuarioGastosxidUsuario(
+		idUsuario: number
+	): Promise<UsuarioGastoDTO> {
 		const response = await apiBACK.get<UsuarioGastoDTO>(
 			`${this.apiUrlUsuario}/ObtenerUsuarioGastosxidUsuario/${idUsuario}`
 		);

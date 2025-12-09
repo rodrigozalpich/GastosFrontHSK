@@ -204,41 +204,84 @@ export default function MisGastos(): JSX.Element {
 				},
 			};
 		},
-		renderRowActions: ({ row }) => (
-			<div className="flex gap-2">
-				<TableActionButton
-					iconSrc={ICONOS_ACCIONES.ver}
-					onClick={() => {
-						navigate(
-							ROUTES.GASTOS_DETALLE.replace(
-								":gastoId",
-								row.original.id.toString()
-							)
-						);
-					}}
-					tooltip="Ver"
-					variant="ver"
-				/>
-				<TableActionButton
-					iconSrc={ICONOS_ACCIONES.editar}
-					onClick={() => {
-						setGastoSeleccionado(row.original);
-						setModoModal("editar");
-					}}
-					tooltip="Editar"
-					variant="edit"
-				/>
-				<TableActionButton
-					iconSrc={ICONOS_ACCIONES.eliminar}
-					onClick={() => {
-						setGastoAEliminar(row.original);
-						setMostrarConfirmacionEliminar(true);
-					}}
-					tooltip="Eliminar"
-					variant="delete"
-				/>
-			</div>
-		),
+		renderRowActions: ({ row }) => {
+			const gasto = row.original;
+			
+			// Condiciones para mostrar botones
+			const puedeEditar =
+				(gasto.editarRechazado && gasto.estatus === 4) ||
+				(gasto.editable && gasto.esAnticipo && !gasto.esCerrado) ||
+				(gasto.editable && !gasto.esAnticipo && !gasto.esCerrado);
+			
+			const puedeCancelar =
+				(gasto.editarRechazado && gasto.estatus === 4) ||
+				(gasto.editable && gasto.esAnticipo && !gasto.esCerrado) ||
+				(gasto.editable && !gasto.esCerrado && !gasto.esAnticipo);
+
+			return (
+				<div className="flex gap-2">
+					{/* Botón Ver - siempre visible */}
+					<TableActionButton
+						iconSrc={ICONOS_ACCIONES.ver}
+						onClick={() => {
+							navigate(
+								ROUTES.GASTOS_DETALLE.replace(
+									":gastoId",
+									gasto.id.toString()
+								)
+							);
+						}}
+						tooltip="Ver gasto"
+						variant="ver"
+					/>
+
+					{/* Botón Devoluciones - solo si tiene devolución */}
+					{gasto.tieneDevolucion && (
+						<TableActionButton
+							iconSrc="/assets/iconos/contabilidad.svg"
+							onClick={() => {
+								// TODO: Implementar mostrarPantallaDevoluciones
+								navigate(
+									ROUTES.GASTOS_DETALLE.replace(
+										":gastoId",
+										gasto.id.toString()
+									)
+								);
+							}}
+							tooltip="Devoluciones"
+							variant="ver"
+						/>
+					)}
+
+					{/* Botón Editar - condicionado */}
+					{puedeEditar && (
+						<TableActionButton
+							iconSrc={ICONOS_ACCIONES.editar}
+							onClick={() => {
+								setGastoSeleccionado(gasto);
+								setModoModal("editar");
+							}}
+							tooltip="Editar gasto"
+							variant="edit"
+						/>
+					)}
+
+					{/* Botón Cancelar - condicionado */}
+					{puedeCancelar && (
+						<TableActionButton
+							iconSrc="/assets/iconos/settings.svg"
+							onClick={() => {
+								// TODO: Implementar ClickCancelarGasto
+								setGastoAEliminar(gasto);
+								setMostrarConfirmacionEliminar(true);
+							}}
+							tooltip="Cancelar gasto"
+							variant="delete"
+						/>
+					)}
+				</div>
+			);
+		},
 	});
 
 	if (isLoading) {
